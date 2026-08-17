@@ -1,0 +1,18 @@
+# InsightForge CD Pipeline
+# Deploys to AWS EC2 on merge to main
+
+# TODO: Week 12 — Implement full CD (build → push → deploy to EC2)
+
+name: CD
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Placeholder
+        run: echo "CD pipeline will be implemented in Week 12"

@@ -1,0 +1,24 @@
+# InsightForge CI Pipeline
+# Runs on every push and PR to main
+
+# TODO: Week 11 — Implement full CI (lint → test → eval regression → build)
+
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  lint-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Placeholder
+        run: echo "CI pipeline will be implemented in Week 11"

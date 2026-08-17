@@ -1,0 +1,6 @@
+{
+  "version": "1.0",
+  "description": "InsightForge evaluation benchmark — 90 questions across 5 datasets",
+  "datasets": ["titanic", "superstore", "ecommerce", "ipl", "synthetic_anomaly"],
+  "questions": []
+}

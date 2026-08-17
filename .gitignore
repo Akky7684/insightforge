@@ -1,0 +1,64 @@
+# ===== Python =====
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg-info/
+dist/
+build/
+*.egg
+
+# ===== Virtual Environment =====
+venv/
+.venv/
+env/
+
+# ===== Environment Variables / Secrets =====
+.env
+.env.local
+.env.production
+
+# ===== IDE =====
+.vscode/settings.json
+.idea/
+*.swp
+*.swo
+
+# ===== OS =====
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ===== Docker =====
+docker-compose.override.yml
+
+# ===== Data (large files — not tracked in Git) =====
+data/*.csv
+data/*.xlsx
+data/*.xls
+data/*.parquet
+data/*.json
+!data/.gitkeep
+!data/README.md
+
+# ===== Chroma vector store persistence =====
+chroma_data/
+
+# ===== Charts / generated outputs =====
+outputs/
+*.png
+*.jpg
+*.jpeg
+!docs/*.png
+
+# ===== Test / coverage =====
+.coverage
+htmlcov/
+.pytest_cache/
+
+# ===== Logs =====
+*.log
+
+# ===== Misc =====
+*.bak
+*.tmp
