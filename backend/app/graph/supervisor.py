@@ -2,10 +2,11 @@
 
 Coordinates:
 - Profiler: Automated schema & distribution profiling.
+- RAG Agent: Domain business glossary grounding & memory retrieval.
 - Planner: Multi-step task decomposition into Subtasks.
 - Coder: Sandboxed execution of subtasks.
 - Critic: Statistical validation & bounded self-correction loop (<= 2 retries).
-- Reporter: Executive synthesis of verified findings.
+- Reporter: Executive synthesis & long-term memory persistence.
 """
 
 from langchain_core.messages import AIMessage
@@ -17,12 +18,13 @@ from backend.app.graph.agents.coder import coder_node
 from backend.app.graph.agents.critic import critic_node
 from backend.app.graph.agents.planner import planner_node
 from backend.app.graph.agents.profiler import profiler_node
+from backend.app.graph.agents.rag_agent import rag_node
 from backend.app.graph.agents.reporter import reporter_node
 from backend.app.graph.state import InsightForgeState
 
 
 def supervisor_node(state: dict) -> Command:
-    """Route user turn through Profiler or Planner."""
+    """Route user turn through Profiler or RAG Grounding."""
     messages = state.get("messages", [])
 
     if not messages:
@@ -42,8 +44,8 @@ def supervisor_node(state: dict) -> Command:
     if not state.get("dataset_profile"):
         return Command(goto="profiler")
 
-    # Otherwise route to Planner to decompose task
-    return Command(goto="planner")
+    # Otherwise route to RAG agent for domain grounding
+    return Command(goto="rag")
 
 
 def build_graph() -> StateGraph:
@@ -53,6 +55,7 @@ def build_graph() -> StateGraph:
     # Add agent nodes
     graph.add_node("supervisor", supervisor_node)
     graph.add_node("profiler", profiler_node)
+    graph.add_node("rag", rag_node)
     graph.add_node("planner", planner_node)
     graph.add_node("coder", coder_node)
     graph.add_node("critic", critic_node)
@@ -62,7 +65,8 @@ def build_graph() -> StateGraph:
     graph.set_entry_point("supervisor")
 
     # Static edges
-    graph.add_edge("profiler", "planner")
+    graph.add_edge("profiler", "rag")
+    graph.add_edge("rag", "planner")
     graph.add_edge("planner", "coder")
     graph.add_edge("reporter", END)
 

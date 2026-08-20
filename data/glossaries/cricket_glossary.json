@@ -1,0 +1,26 @@
+[
+  {
+    "id": "cric_01",
+    "term": "Batting Strike Rate",
+    "definition": "The average number of runs scored per 100 legal balls faced by a batsman.",
+    "formula": "(Total Batsman Runs / Total Legal Balls Faced) * 100",
+    "pandas_example": "(df.groupby('batter')['batsman_runs'].sum() / df[df['extras_type'] != 'wides'].groupby('batter')['ball'].count()) * 100",
+    "category": "Cricket"
+  },
+  {
+    "id": "cric_02",
+    "term": "Economy Rate",
+    "definition": "The average number of runs conceded by a bowler per 6-ball over bowled.",
+    "formula": "(Total Runs Conceded / Total Legal Deliveries) * 6",
+    "pandas_example": "(df.groupby('bowler')['total_runs'].sum() / df[~df['extras_type'].isin(['wides', 'noballs'])].groupby('bowler')['ball'].count()) * 6",
+    "category": "Cricket"
+  },
+  {
+    "id": "cric_03",
+    "term": "Dot Ball Percentage",
+    "definition": "Percentage of legal balls bowled that yielded zero total runs.",
+    "formula": "Count(Deliveries where total_runs == 0) / Count(Legal Deliveries) * 100",
+    "pandas_example": "(df['total_runs'] == 0).mean() * 100",
+    "category": "Cricket"
+  }
+]

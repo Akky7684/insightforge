@@ -30,6 +30,9 @@ or execute a specific subtask about a dataset by writing Python/pandas/scipy/mat
 ## Dataset Profile:
 {schema_info}
 
+## Domain Business Glossary Rules & Standard Formulas (if applicable):
+{rag_context}
+
 ## Context from Prior Steps (if any):
 {prior_context}
 """
@@ -93,6 +96,7 @@ def coder_node(state: dict) -> Command:
     system_msg = SystemMessage(
         content=CODER_SYSTEM_PROMPT.format(
             schema_info=schema_info,
+            rag_context=state.get("rag_context") or "None.",
             prior_context=prior_context,
         )
     )

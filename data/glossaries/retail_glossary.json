@@ -1,0 +1,34 @@
+[
+  {
+    "id": "ret_01",
+    "term": "Profit Margin",
+    "definition": "The percentage of revenue that exceeds the cost of goods sold and operating expenses.",
+    "formula": "(Total Profit / Total Sales) * 100",
+    "pandas_example": "(df['Profit'].sum() / df['Sales'].sum()) * 100",
+    "category": "Retail"
+  },
+  {
+    "id": "ret_02",
+    "term": "Discount Ratio",
+    "definition": "The average percentage reduction applied to list prices across all line items.",
+    "formula": "Mean of Discount column expressed as percentage",
+    "pandas_example": "df['Discount'].mean() * 100",
+    "category": "Retail"
+  },
+  {
+    "id": "ret_03",
+    "term": "High-Value Order",
+    "definition": "An order whose total aggregated sales across all item rows exceeds $1,000.",
+    "formula": "Order ID groups where Sum(Sales) >= 1000",
+    "pandas_example": "df.groupby('Order ID')['Sales'].sum()[lambda s: s >= 1000]",
+    "category": "Retail"
+  },
+  {
+    "id": "ret_04",
+    "term": "Return on Sales (ROS)",
+    "definition": "Ratio of net profit to net sales revenue evaluating operational efficiency.",
+    "formula": "Sum(Profit) / Sum(Sales)",
+    "pandas_example": "df['Profit'].sum() / df['Sales'].sum()",
+    "category": "Retail"
+  }
+]

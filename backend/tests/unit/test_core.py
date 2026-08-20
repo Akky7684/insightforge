@@ -1,4 +1,4 @@
-"""Unit tests for InsightForge Core Engine & Week 5 Critic & Stats Tool."""
+"""Unit tests for InsightForge Core Engine & Week 6 RAG Vector Memory."""
 
 import os
 from pathlib import Path
@@ -13,10 +13,18 @@ from backend.app.graph.agents.coder import _get_schema_info
 from backend.app.graph.agents.critic import critic_node
 from backend.app.graph.agents.planner import PlanOutput, planner_node
 from backend.app.graph.agents.profiler import profile_dataset
+from backend.app.graph.agents.rag_agent import rag_node
 from backend.app.graph.agents.reporter import reporter_node
 from backend.app.graph.state import Subtask
 from backend.app.graph.supervisor import get_graph, supervisor_node
 from backend.app.main import app
+from backend.app.memory.vector_memory import (
+    add_glossary_term,
+    list_all_glossary_terms,
+    save_analysis,
+    search_glossary,
+    search_past_analyses,
+)
 from backend.app.tools.chart_tool import ChartSpec, render_chart_from_spec
 from backend.app.tools.sandbox_exec import execute_code_in_sandbox
 from backend.app.tools.stats_tool import StatsTestRequest, run_stats_test
@@ -103,6 +111,49 @@ def test_stats_tool_hypothesis_testing():
     anova_res = run_stats_test(df, StatsTestRequest(test_type="anova", var1="Fare", group_col="Pclass"))
     assert anova_res.is_significant is True
     assert anova_res.statistic > 100.0
+
+
+def test_vector_memory_glossary_crud_and_search():
+    """Verify ChromaDB business glossary storage and semantic similarity search."""
+    terms = list_all_glossary_terms()
+    assert len(terms) >= 3
+
+    # Semantic search for AOV
+    matches = search_glossary("What is the average order value formula?", top_k=1)
+    assert len(matches) > 0
+    assert "AOV" in matches[0]["term"] or "Order Value" in matches[0]["term"]
+    assert matches[0]["similarity"] > 0.3
+
+    # Add custom term and retrieve it
+    t_id = add_glossary_term(
+        term="Customer Retention Rate",
+        definition="Proportion of active users retained over a period.",
+        formula="(End Customers - New Customers) / Start Customers * 100",
+        category="Growth",
+    )
+    assert t_id.startswith("custom_")
+
+    # Index and search past analysis
+    a_id = save_analysis(
+        query="Calculate AOV in 2017",
+        dataset_name="superstore.csv",
+        code="df['Sales'].sum() / df['Order ID'].nunique()",
+        report_summary="AOV was $458.60.",
+    )
+    assert a_id.startswith("analysis_")
+    past_matches = search_past_analyses("AOV query", dataset_name="superstore.csv", top_k=1)
+    assert len(past_matches) > 0
+
+
+def test_rag_agent_grounding_node():
+    """Verify RAG Grounding node injects domain formulas into state context."""
+    state = {
+        "messages": [HumanMessage(content="Calculate the average order value (AOV) for our store.")],
+        "dataset_id": "superstore.csv",
+    }
+    rag_res = rag_node(state)
+    assert rag_res["rag_context"] is not None
+    assert "Average Order Value" in rag_res["rag_context"] or "AOV" in rag_res["rag_context"]
 
 
 def test_critic_agent_reflection_retry():

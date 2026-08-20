@@ -181,8 +181,13 @@ Insight_Forge/
     - Statistical Hypothesis Testing Tool: Independent/Paired T-Tests, $\chi^2$ Contingency, One-Way ANOVA, Mann-Whitney U, Pearson/Spearman correlation, and effect sizes (Cohen's d, Cramér's V, $\eta^2$).
     - Critic Agent: Statistical assumption validation, skewness checking, and bounded self-correction loop ($\le 2$ retries).
     - Self-Correction Recovery Rate: 100% on benchmark execution retries.
-- **Current Position**: Ready to begin **Week 6 (Sep 21–27)**: *RAG Grounding & Persistent Long-Term Memory (ChromaDB Vector Store + Business Glossary)*.
-- **Blockers / Issues**: Zero active blockers. 10/10 unit tests passing, git tree clean and pushed.
+  - ✅ **Week 6**: RAG Grounding & Persistent Long-Term Memory (Sep 21–27)
+    - ChromaDB Vector Store: Persistent dual collections (`business_glossary` and `past_analyses`) with local zero-cost embeddings.
+    - Seed Knowledge Bases: Domain business glossaries for Retail, E-Commerce, and Cricket in `data/glossaries/`.
+    - RAG Grounding Agent: Semantic search injecting metric definitions and pandas formulas into `state["rag_context"]`.
+    - UI Glossary Tab: Interactive vector memory explorer and custom term registration in Streamlit.
+- **Current Position**: Ready to begin **Week 7 (Sep 28–Oct 4)**: *Full Multi-Agent Graph Integration (All Specialized Agents) & End-to-End Polish*.
+- **Blockers / Issues**: Zero active blockers. 12/12 unit tests passing, git tree clean and pushed.
 
 ---
 

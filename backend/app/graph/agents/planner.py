@@ -29,6 +29,9 @@ Your job is to analyze user requests about a tabular dataset and decompose them 
 
 ## Dataset Profile:
 {profile_summary}
+
+## Domain Business Glossary & Rules (if any):
+{rag_context}
 """
 
 
@@ -40,22 +43,29 @@ class PlanOutput(BaseModel):
     subtasks: List[Subtask] = Field(description="Ordered list of executable subtasks")
 
 
-def planner_node(state: dict) -> Command:
+def planner_node(state: dict) -> dict:
     """LangGraph node: Planner agent decomposes the user's prompt into an executable plan."""
     messages = state.get("messages", [])
     if not messages:
-        return Command(
-            update={"messages": [AIMessage(content="Please provide an analytical question about the dataset.")]},
-            goto="coder"
-        )
+        return {
+            "messages": [AIMessage(content="Please provide an analytical question about the dataset.")],
+            "plan": [],
+            "current_subtask_idx": 0,
+        }
 
     user_query = messages[-1].content if hasattr(messages[-1], "content") else str(messages[-1])
 
-    # Extract schema / profile summary
+    # Extract schema / profile summary and RAG domain context
     profile = state.get("dataset_profile")
     profile_summary = profile.get("summary_text") if profile else "No profile summary available."
+    rag_context = state.get("rag_context") or "None."
 
-    system_msg = SystemMessage(content=PLANNER_SYSTEM_PROMPT.format(profile_summary=profile_summary))
+    system_msg = SystemMessage(
+        content=PLANNER_SYSTEM_PROMPT.format(
+            profile_summary=profile_summary,
+            rag_context=rag_context,
+        )
+    )
 
     try:
         llm = get_llm("flash")

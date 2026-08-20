@@ -90,6 +90,21 @@ def reporter_node(state: dict) -> Command:
             if f"[CHART:{cp}]" not in final_content:
                 final_content += f"\n\n[CHART:{cp}]"
 
+        # Index verified analysis into vector memory
+        try:
+            from backend.app.memory.vector_memory import save_analysis
+            q_text = user_msg[-1].content if hasattr(user_msg[-1], "content") else str(user_msg[-1])
+            ds_name = state.get("dataset_id") or "dataset"
+            code_text = "\n".join([st.result for st in plan if st.result]) if plan else ""
+            save_analysis(
+                query=q_text,
+                dataset_name=ds_name,
+                code=code_text,
+                report_summary=final_content,
+            )
+        except Exception:
+            pass
+
         return {"messages": [AIMessage(content=final_content)]}
 
     except Exception as e:

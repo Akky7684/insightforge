@@ -231,7 +231,7 @@ if st.session_state.dataset_df is None:
         load_dataset(str(default_titanic), "titanic.csv")
         st.rerun()
 
-tab_chat, tab_profile = st.tabs(["💬 Conversational Analyst", "📊 Dataset Deep Profile"])
+tab_chat, tab_profile, tab_glossary = st.tabs(["💬 Conversational Analyst", "📊 Dataset Deep Profile", "📚 Business Glossary & RAG"])
 
 # --- TAB 1: Chat Interface ---
 with tab_chat:
@@ -330,3 +330,46 @@ with tab_profile:
             st.dataframe(st.session_state.dataset_df.head(10), use_container_width=True)
     else:
         st.info("Load a dataset from the sidebar to view its automated profile.")
+
+
+# --- TAB 3: Business Glossary & RAG Knowledge Base ---
+with tab_glossary:
+    st.markdown("### 📚 Domain Business Glossary & RAG Vector Memory")
+    st.markdown("ChromaDB semantic index grounding business formulas (e.g. AOV, Profit Margin, Strike Rate).")
+
+    try:
+        from backend.app.memory.vector_memory import add_glossary_term, list_all_glossary_terms, search_glossary
+
+        search_q = st.text_input("🔍 Search Vector Knowledge Base (Semantic Similarity):", placeholder="e.g. 'How is average order value calculated?'")
+        if search_q:
+            results = search_glossary(search_q, top_k=3)
+            st.markdown(f"**Top Matching Definitions for:** *'{search_q}'*")
+            for r in results:
+                st.success(f"**{r['term']}** ({r['category']}) — *Similarity: {r['similarity']:.2%}*\n\n**Definition:** {r['definition']}\n\n**Formula:** `{r['formula']}`\n\n**Pandas:** `{r['pandas_example']}`")
+            st.markdown("---")
+
+        all_terms = list_all_glossary_terms()
+        if all_terms:
+            st.markdown(f"#### 📖 Registered Domain Metrics ({len(all_terms)} Terms)")
+            terms_df = pd.DataFrame(all_terms)[["term", "category", "formula", "definition", "pandas_example"]]
+            st.dataframe(terms_df, use_container_width=True, hide_index=True)
+        else:
+            st.info("No glossary terms indexed yet.")
+
+        st.markdown("---")
+        with st.expander("➕ Add Custom Business Metric Definition"):
+            with st.form("new_term_form"):
+                new_term = st.text_input("Metric Name", placeholder="e.g. Net Churn Rate")
+                new_category = st.selectbox("Category", ["Retail", "E-Commerce", "Finance", "Cricket", "Custom"])
+                new_def = st.text_area("Plain English Definition", placeholder="Description of the metric...")
+                new_formula = st.text_input("Mathematical Formula", placeholder="e.g. (Lost Customers / Total Customers) * 100")
+                new_pandas = st.text_input("Pandas Reference Code", placeholder="e.g. (df['churned'].sum() / len(df)) * 100")
+                submitted = st.form_submit_button("Index into ChromaDB")
+                if submitted and new_term and new_formula:
+                    add_glossary_term(new_term, new_def, new_formula, new_category, new_pandas)
+                    st.success(f"Successfully indexed '{new_term}' into ChromaDB vector memory!")
+                    st.rerun()
+
+    except Exception as e:
+        st.warning(f"Vector memory viewer unavailable: {e}")
+

@@ -1,0 +1,26 @@
+[
+  {
+    "id": "ecom_01",
+    "term": "Average Order Value (AOV)",
+    "definition": "The average monetary value of each unique customer invoice or transaction.",
+    "formula": "Total Revenue (Quantity * UnitPrice) / Count of Unique Invoices",
+    "pandas_example": "(df['Quantity'] * df['UnitPrice']).sum() / df['InvoiceNo'].nunique()",
+    "category": "E-Commerce"
+  },
+  {
+    "id": "ecom_02",
+    "term": "Cancellation Rate",
+    "definition": "The proportion of invoices that were cancelled (indicated by InvoiceNo starting with 'C').",
+    "formula": "Count(Cancelled Invoices) / Count(Total Invoices) * 100",
+    "pandas_example": "df['InvoiceNo'].astype(str).str.startswith('C').mean() * 100",
+    "category": "E-Commerce"
+  },
+  {
+    "id": "ecom_03",
+    "term": "Repeat Customer Ratio",
+    "definition": "Percentage of customers who have made more than 1 distinct order.",
+    "formula": "Count(Customers with >1 Invoices) / Count(Unique Customers) * 100",
+    "pandas_example": "(df.groupby('CustomerID')['InvoiceNo'].nunique() > 1).mean() * 100",
+    "category": "E-Commerce"
+  }
+]
