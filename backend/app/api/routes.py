@@ -153,3 +153,17 @@ async def list_sample_datasets():
             continue
 
     return datasets
+
+
+@router.get("/profile")
+async def get_dataset_profile(dataset_path: str):
+    """Generate or retrieve comprehensive statistical profile of a dataset."""
+    if not os.path.exists(dataset_path):
+        raise HTTPException(status_code=404, detail=f"Dataset file not found at: {dataset_path}")
+
+    try:
+        from backend.app.graph.agents.profiler import profile_dataset
+        profile = profile_dataset(dataset_path)
+        return profile
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Profiling error: {e}")

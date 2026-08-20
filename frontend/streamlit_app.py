@@ -1,10 +1,11 @@
 """InsightForge — Streamlit Frontend UI.
 
 Interactive multi-agent data analyst interface supporting CSV/Excel uploads,
-sample dataset selection, dataset inspection, and natural-language Q&A.
+automated dataset profiling, chart visualization, and natural-language Q&A.
 """
 
 import os
+import re
 import uuid
 from pathlib import Path
 
@@ -36,18 +37,16 @@ st.markdown(
         -webkit-text-fill-color: transparent;
     }
     .sub-title {
-        font-size: 1.05rem;
+        font-size: 1.0rem;
         color: #666;
-        margin-bottom: 1.5rem;
+        margin-bottom: 1.2rem;
     }
-    .metric-badge {
-        display: inline-block;
-        padding: 4px 10px;
-        background-color: #f0f2f6;
-        border-radius: 6px;
-        font-weight: 600;
-        font-size: 0.85rem;
-        margin-right: 8px;
+    .stat-box {
+        background-color: #f8f9fa;
+        border-radius: 8px;
+        padding: 12px;
+        border-left: 4px solid #4e4376;
+        margin-bottom: 10px;
     }
     </style>
     """,
@@ -70,15 +69,22 @@ if "active_dataset_name" not in st.session_state:
 if "dataset_df" not in st.session_state:
     st.session_state.dataset_df = None
 
+if "dataset_profile" not in st.session_state:
+    st.session_state.dataset_profile = None
+
 
 # --- Helper Functions ---
 def load_dataset(file_path: str, file_name: str):
-    """Load and preview dataset in session state."""
+    """Load and preview dataset in session state, generating profile."""
     try:
         df = pd.read_csv(file_path, encoding="latin1")
         st.session_state.dataset_df = df
         st.session_state.active_dataset_path = str(Path(file_path).resolve())
         st.session_state.active_dataset_name = file_name
+
+        # Trigger profiling
+        from backend.app.graph.agents.profiler import profile_dataset
+        st.session_state.dataset_profile = profile_dataset(file_path)
         return True
     except Exception as e:
         st.sidebar.error(f"Error loading dataset: {e}")
@@ -86,12 +92,12 @@ def load_dataset(file_path: str, file_name: str):
 
 
 def query_agent(prompt: str) -> str:
-    """Send natural language query to FastAPI backend (or graph directly if backend is offline)."""
+    """Send natural language query to FastAPI backend or graph fallback."""
     dataset_path = st.session_state.active_dataset_path
     if not dataset_path:
         return "⚠️ Please select or upload a dataset first!"
 
-    # Try FastAPI backend endpoint first
+    # Try FastAPI backend first
     try:
         resp = requests.post(
             f"{API_BASE_URL}/chat",
@@ -100,14 +106,14 @@ def query_agent(prompt: str) -> str:
                 "dataset_path": dataset_path,
                 "session_id": st.session_state.session_id,
             },
-            timeout=45,
+            timeout=50,
         )
         if resp.status_code == 200:
             return resp.json().get("response", "No response received.")
     except Exception:
-        # Direct graph fallback (in-process fallback if standalone)
         pass
 
+    # Direct in-process graph fallback
     try:
         from langchain_core.messages import HumanMessage
         from backend.app.graph.supervisor import get_graph
@@ -118,7 +124,7 @@ def query_agent(prompt: str) -> str:
             "messages": [HumanMessage(content=prompt)],
             "dataset_id": st.session_state.active_dataset_name,
             "dataset_path": dataset_path,
-            "dataset_profile": None,
+            "dataset_profile": st.session_state.dataset_profile,
             "plan": [],
             "current_subtask_idx": 0,
             "rag_context": None,
@@ -133,9 +139,25 @@ def query_agent(prompt: str) -> str:
         return f"❌ Execution error: {e}"
 
 
+def render_message_content(content: str):
+    """Render text message and extract/display any embedded charts."""
+    # Check for [CHART:<path>] tags
+    chart_matches = re.findall(r"\[CHART:(.*?)\]", content)
+    cleaned_text = re.sub(r"\[CHART:.*?\]", "", content).strip()
+
+    if cleaned_text:
+        st.markdown(cleaned_text)
+
+    for chart_path in chart_matches:
+        if os.path.exists(chart_path):
+            st.image(chart_path, caption="Generated Visualization", use_container_width=True)
+        else:
+            st.caption(f"📊 Chart saved: `{Path(chart_path).name}`")
+
+
 # --- Sidebar ---
 with st.sidebar:
-    st.markdown("### 📊 Dataset Selection")
+    st.markdown("### 📊 Dataset Control Panel")
 
     data_source = st.radio("Choose source:", ["Sample Datasets", "Upload CSV / Excel"], index=0)
 
@@ -177,88 +199,130 @@ with st.sidebar:
                     save_path = csv_path
 
                 if load_dataset(str(save_path), uploaded_file.name):
-                    st.success(f"Uploaded & Loaded `{uploaded_file.name}`")
+                    st.success(f"Uploaded `{uploaded_file.name}`")
                     st.session_state.messages = []
                     st.rerun()
 
-    # If dataset is loaded, show dataset details
+    # Active dataset quick stats
     if st.session_state.dataset_df is not None:
         df = st.session_state.dataset_df
         st.markdown("---")
-        st.markdown(f"**Active File:** `{st.session_state.active_dataset_name}`")
-        st.markdown(f"**Rows:** `{df.shape[0]:,}` | **Cols:** `{df.shape[1]}`")
+        st.markdown(f"**Active:** `{st.session_state.active_dataset_name}`")
+        st.markdown(f"**Records:** `{df.shape[0]:,}` | **Features:** `{df.shape[1]}`")
 
-        with st.expander("🔍 Column Details & Data Types"):
-            dtypes_df = pd.DataFrame({"Column": df.columns, "Type": df.dtypes.astype(str)})
-            st.dataframe(dtypes_df, use_container_width=True, hide_index=True)
-
-        with st.expander("👀 View Data Preview (Head 5)"):
-            st.dataframe(df.head(5), use_container_width=True)
-
-        if st.button("🧹 Clear Conversation", use_container_width=True):
+        if st.button("🧹 Clear Chat History", use_container_width=True):
             st.session_state.messages = []
             st.session_state.session_id = str(uuid.uuid4())
             st.rerun()
 
 
-# --- Main Chat Interface ---
+# --- Main Dashboard ---
 st.markdown('<div class="main-title">⚡ InsightForge</div>', unsafe_allow_html=True)
-st.markdown('<div class="sub-title">Autonomous Multi-Agent Data Analyst — LangGraph Orchestration & Sandboxed Python Execution</div>', unsafe_allow_html=True)
+st.markdown('<div class="sub-title">Autonomous Multi-Agent Data Analyst — LangGraph Orchestration & Sandboxed Analytics</div>', unsafe_allow_html=True)
 
-# Status bar
-if st.session_state.active_dataset_name:
-    st.info(f"📂 **Active Dataset:** `{st.session_state.active_dataset_name}` ({len(st.session_state.dataset_df):,} rows). Ask any analytical or statistical question below.")
-else:
-    # Auto-load titanic.csv as default if nothing loaded yet
+# Auto-load titanic.csv if session empty
+if st.session_state.dataset_df is None:
     default_titanic = Path(__file__).resolve().parent.parent / "data" / "titanic.csv"
     if default_titanic.exists():
         load_dataset(str(default_titanic), "titanic.csv")
         st.rerun()
+
+tab_chat, tab_profile = st.tabs(["💬 Conversational Analyst", "📊 Dataset Deep Profile"])
+
+# --- TAB 1: Chat Interface ---
+with tab_chat:
+    if st.session_state.active_dataset_name:
+        st.caption(f"Active Context: `{st.session_state.active_dataset_name}` ({len(st.session_state.dataset_df):,} rows)")
+
+    # Display History
+    for msg in st.session_state.messages:
+        with st.chat_message(msg["role"]):
+            render_message_content(msg["content"])
+
+    # Quick Action Buttons
+    if not st.session_state.messages and st.session_state.active_dataset_name == "titanic.csv":
+        st.markdown("**Suggested Analysis Prompts:**")
+        c1, c2, c3, c4 = st.columns(4)
+        if c1.button("Survival by Gender"):
+            p = "What was the survival rate of male vs female passengers?"
+            st.session_state.messages.append({"role": "user", "content": p})
+            with st.spinner("Analyzing in sandbox..."):
+                ans = query_agent(p)
+            st.session_state.messages.append({"role": "assistant", "content": ans})
+            st.rerun()
+
+        if c2.button("Plot Class Survival"):
+            p = "Plot a bar chart showing survival rate by passenger class (Pclass)."
+            st.session_state.messages.append({"role": "user", "content": p})
+            with st.spinner("Generating visualization..."):
+                ans = query_agent(p)
+            st.session_state.messages.append({"role": "assistant", "content": ans})
+            st.rerun()
+
+        if c3.button("Fare Distribution"):
+            p = "What is the average, median, and max fare paid?"
+            st.session_state.messages.append({"role": "user", "content": p})
+            with st.spinner("Analyzing in sandbox..."):
+                ans = query_agent(p)
+            st.session_state.messages.append({"role": "assistant", "content": ans})
+            st.rerun()
+
+        if c4.button("Age Outliers"):
+            p = "How many passengers have age values considered statistical outliers?"
+            st.session_state.messages.append({"role": "user", "content": p})
+            with st.spinner("Analyzing in sandbox..."):
+                ans = query_agent(p)
+            st.session_state.messages.append({"role": "assistant", "content": ans})
+            st.rerun()
+
+    # Chat Input
+    if user_query := st.chat_input("Ask any question or request a plot (e.g. 'Plot sales by category', 'Calculate survival correlation')..."):
+        st.session_state.messages.append({"role": "user", "content": user_query})
+        with st.chat_message("user"):
+            st.markdown(user_query)
+
+        with st.chat_message("assistant"):
+            with st.spinner("InsightForge agents executing in sandbox..."):
+                response = query_agent(user_query)
+                render_message_content(response)
+
+        st.session_state.messages.append({"role": "assistant", "content": response})
+
+
+# --- TAB 2: Dataset Deep Profile ---
+with tab_profile:
+    if st.session_state.dataset_profile:
+        prof = st.session_state.dataset_profile
+        st.markdown(f"### 📈 Automated Profile: `{prof['dataset_name']}`")
+
+        # Metric KPI cards
+        kpi1, kpi2, kpi3, kpi4 = st.columns(4)
+        kpi1.metric("Total Rows", f"{prof['row_count']:,}")
+        kpi2.metric("Total Columns", prof["column_count"])
+        kpi3.metric("Missing Cells", f"{prof['total_missing_cells']:,}")
+        kpi4.metric("High Correlations (|r|>=0.5)", len(prof["high_correlations"]))
+
+        st.markdown("---")
+
+        # Column Schema & Missingness Table
+        st.markdown("#### 📋 Columns & Missingness")
+        cols_df = pd.DataFrame(prof["columns"])
+        st.dataframe(cols_df, use_container_width=True, hide_index=True)
+
+        # Numerical Distributions
+        if prof["numerical_stats"]:
+            st.markdown("#### 🔢 Numerical Distributions & IQR Outliers")
+            num_df = pd.DataFrame.from_dict(prof["numerical_stats"], orient="index")
+            st.dataframe(num_df, use_container_width=True)
+
+        # Correlations Alert
+        if prof["high_correlations"]:
+            st.markdown("#### 🔗 High Feature Correlations")
+            corr_df = pd.DataFrame(prof["high_correlations"])
+            st.dataframe(corr_df, use_container_width=True, hide_index=True)
+
+        # Raw preview expander
+        with st.expander("👀 View Raw Sample Head (10 Rows)"):
+            st.dataframe(st.session_state.dataset_df.head(10), use_container_width=True)
     else:
-        st.warning("👈 Please select or upload a dataset from the sidebar to begin analysis.")
-
-# Display Conversation History
-for msg in st.session_state.messages:
-    with st.chat_message(msg["role"]):
-        st.markdown(msg["content"])
-
-# Quick Prompt Suggestions
-if not st.session_state.messages and st.session_state.active_dataset_name == "titanic.csv":
-    st.markdown("**Suggested Quick Questions:**")
-    col1, col2, col3 = st.columns(3)
-    if col1.button("Average age by gender"):
-        prompt_text = "What is the average age of passengers grouped by gender?"
-        st.session_state.messages.append({"role": "user", "content": prompt_text})
-        with st.spinner("Analyzing dataset in sandbox..."):
-            ans = query_agent(prompt_text)
-        st.session_state.messages.append({"role": "assistant", "content": ans})
-        st.rerun()
-
-    if col2.button("Survival rate by passenger class"):
-        prompt_text = "What was the survival rate for each passenger class (Pclass)?"
-        st.session_state.messages.append({"role": "user", "content": prompt_text})
-        with st.spinner("Analyzing dataset in sandbox..."):
-            ans = query_agent(prompt_text)
-        st.session_state.messages.append({"role": "assistant", "content": ans})
-        st.rerun()
-
-    if col3.button("Highest fare paid"):
-        prompt_text = "What was the highest fare paid and who paid it?"
-        st.session_state.messages.append({"role": "user", "content": prompt_text})
-        with st.spinner("Analyzing dataset in sandbox..."):
-            ans = query_agent(prompt_text)
-        st.session_state.messages.append({"role": "assistant", "content": ans})
-        st.rerun()
-
-# User Input
-if user_query := st.chat_input("Ask a question about the dataset (e.g., 'What is the median fare?', 'Show correlation between age and fare')..."):
-    st.session_state.messages.append({"role": "user", "content": user_query})
-    with st.chat_message("user"):
-        st.markdown(user_query)
-
-    with st.chat_message("assistant"):
-        with st.spinner("InsightForge agents analyzing in sandbox..."):
-            response = query_agent(user_query)
-            st.markdown(response)
-
-    st.session_state.messages.append({"role": "assistant", "content": response})
+        st.info("Load a dataset from the sidebar to view its automated profile.")

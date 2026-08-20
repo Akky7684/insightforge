@@ -17,12 +17,12 @@ about a dataset by writing Python/pandas code.
 
 ## Rules
 1. The dataset is already loaded as a pandas DataFrame called `df`.
-2. Write concise, correct pandas/numpy/scipy code to answer the question.
-3. ALWAYS use `print()` to output your final answer clearly.
+2. Write concise, correct pandas/numpy/scipy/matplotlib/seaborn code to answer the question.
+3. ALWAYS use `print()` to output your numerical/textual answers clearly.
 4. Format numbers nicely (round to 2 decimal places where appropriate).
-5. If the question asks for a table, print it in a readable format.
+5. If the question asks for a chart, graph, or visualization, use matplotlib or seaborn to create it with titles and labels. Do NOT call plt.show(); the sandbox automatically captures and saves figures.
 6. Do NOT import os, sys, subprocess, or any unsafe modules.
-7. You CAN use: pandas, numpy, scipy, statsmodels, matplotlib, math, statistics.
+7. You CAN use: pandas, numpy, scipy, statsmodels, matplotlib, seaborn, math, statistics.
 8. Keep code short and focused — no unnecessary operations.
 
 ## Dataset Info
@@ -75,8 +75,13 @@ def coder_node(state: dict) -> Command:
             }
         )
 
-    # Build the schema-aware system prompt
-    schema_info = _get_schema_info(dataset_path)
+    # Build the schema/profile-aware system prompt
+    profile = state.get("dataset_profile")
+    if profile and "summary_text" in profile:
+        schema_info = profile["summary_text"]
+    else:
+        schema_info = _get_schema_info(dataset_path)
+
     system_msg = SystemMessage(
         content=CODER_SYSTEM_PROMPT.format(schema_info=schema_info)
     )
@@ -127,13 +132,17 @@ def coder_node(state: dict) -> Command:
         answer = result["output"].strip()
         response_text = f"{answer}"
     elif result["success"]:
-        response_text = "Code executed successfully but produced no output."
+        response_text = "Analysis executed successfully."
     else:
         response_text = (
             f"I encountered an error while analyzing the data:\n"
             f"```\n{result['error']}\n```\n"
-            f"Let me try a different approach."
+            f"Let me know if you would like me to try an alternative approach."
         )
+
+    # Attach chart path token if a figure was generated
+    if result.get("chart_path"):
+        response_text += f"\n\n[CHART:{result['chart_path']}]"
 
     return Command(
         update={"messages": [AIMessage(content=response_text)]}

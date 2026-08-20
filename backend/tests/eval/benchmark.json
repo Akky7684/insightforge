@@ -1,6 +1,106 @@
 {
   "version": "1.0",
-  "description": "InsightForge evaluation benchmark — 90 questions across 5 datasets",
-  "datasets": ["titanic", "superstore", "ecommerce", "ipl", "synthetic_anomaly"],
-  "questions": []
+  "description": "InsightForge Evaluation Benchmark — Baseline 10 questions across Titanic and Superstore datasets",
+  "questions": [
+    {
+      "id": "eval_01",
+      "dataset": "titanic.csv",
+      "category": "factual_aggregation",
+      "question": "What is the total number of passengers in the dataset?",
+      "expected_type": "number",
+      "ground_truth": 891,
+      "acceptable_strings": ["891"],
+      "tolerance_pct": 0.0
+    },
+    {
+      "id": "eval_02",
+      "dataset": "titanic.csv",
+      "category": "factual_aggregation",
+      "question": "What is the overall survival rate as a percentage?",
+      "expected_type": "percentage",
+      "ground_truth": 38.38,
+      "acceptable_strings": ["38.38", "38.4", "38.38%"],
+      "tolerance_pct": 1.0
+    },
+    {
+      "id": "eval_03",
+      "dataset": "titanic.csv",
+      "category": "factual_aggregation",
+      "question": "What is the average age of passengers?",
+      "expected_type": "number",
+      "ground_truth": 29.70,
+      "acceptable_strings": ["29.7", "29.70"],
+      "tolerance_pct": 1.0
+    },
+    {
+      "id": "eval_04",
+      "dataset": "titanic.csv",
+      "category": "grouping_comparison",
+      "question": "How many male vs female passengers were on board?",
+      "expected_type": "text_numbers",
+      "ground_truth": {"male": 577, "female": 314},
+      "acceptable_strings": ["577", "314"],
+      "tolerance_pct": 0.0
+    },
+    {
+      "id": "eval_05",
+      "dataset": "titanic.csv",
+      "category": "conditional_aggregation",
+      "question": "What was the average fare paid by 1st class passengers?",
+      "expected_type": "number",
+      "ground_truth": 84.15,
+      "acceptable_strings": ["84.15", "84.154"],
+      "tolerance_pct": 1.0
+    },
+    {
+      "id": "eval_06",
+      "dataset": "superstore.csv",
+      "category": "factual_aggregation",
+      "question": "What is the total sales amount across all orders in the dataset?",
+      "expected_type": "currency_number",
+      "ground_truth": 2297200.86,
+      "acceptable_strings": ["2297200.86", "2,297,200.86", "2.3M"],
+      "tolerance_pct": 1.0
+    },
+    {
+      "id": "eval_07",
+      "dataset": "superstore.csv",
+      "category": "factual_aggregation",
+      "question": "What is the total overall profit recorded in the dataset?",
+      "expected_type": "currency_number",
+      "ground_truth": 286397.02,
+      "acceptable_strings": ["286397.02", "286,397.02"],
+      "tolerance_pct": 1.0
+    },
+    {
+      "id": "eval_08",
+      "dataset": "superstore.csv",
+      "category": "grouping_comparison",
+      "question": "Which product category generated the highest total sales?",
+      "expected_type": "categorical_string",
+      "ground_truth": "Technology",
+      "acceptable_strings": ["Technology", "technology"],
+      "tolerance_pct": 0.0
+    },
+    {
+      "id": "eval_09",
+      "dataset": "superstore.csv",
+      "category": "cardinality_count",
+      "question": "How many unique orders (Order IDs) are in the dataset?",
+      "expected_type": "number",
+      "ground_truth": 5009,
+      "acceptable_strings": ["5009", "5,009"],
+      "tolerance_pct": 0.0
+    },
+    {
+      "id": "eval_10",
+      "dataset": "superstore.csv",
+      "category": "conditional_aggregation",
+      "question": "What is the total sales for the 'West' region?",
+      "expected_type": "currency_number",
+      "ground_truth": 725457.82,
+      "acceptable_strings": ["725457.82", "725,457.82"],
+      "tolerance_pct": 1.0
+    }
+  ]
 }

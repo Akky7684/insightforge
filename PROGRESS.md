@@ -166,8 +166,13 @@ Insight_Forge/
 - **Completed Milestones**:
   - ✅ **Week 1**: Setup & Scope Lock (Aug 17–23)
   - ✅ **Week 2**: Core LangGraph Skeleton & MVP (Aug 24–30)
-- **Current Position**: Ready to begin **Week 3 (Aug 31–Sep 6)**: *Harden the MVP Loop*.
-- **Blockers / Issues**: Zero active blockers. All tests green, git tree clean and pushed.
+  - ✅ **Week 3**: Harden the MVP Loop (Aug 31–Sep 6)
+    - Data Profiler Agent: automated statistical summary & correlation detection.
+    - Chart Tool: Pydantic-validated plotting engine with automatic figure capture.
+    - Evaluation Benchmark: 10 ground-truth questions (100% accuracy, 0 crashes).
+    - UI Integration: Deep Profile dashboard tab & inline chart rendering in Streamlit.
+- **Current Position**: Ready to begin **Week 4 (Sep 7–13)**: *Planner Agent + Multi-Step Complex Task Decomposition*.
+- **Blockers / Issues**: Zero active blockers. 8/8 unit tests passing, evaluation harness operational, git tree clean and pushed.
 
 ---
 

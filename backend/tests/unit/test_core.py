@@ -1,21 +1,25 @@
-"""Unit tests for InsightForge Week 2 Core Engine."""
+"""Unit tests for InsightForge Core Engine & Week 3 Capabilities."""
 
 import os
 from pathlib import Path
 
+import pandas as pd
 import pytest
 from fastapi.testclient import TestClient
 from langchain_core.messages import HumanMessage
 
 from backend.app.config import get_settings
 from backend.app.graph.agents.coder import _get_schema_info
+from backend.app.graph.agents.profiler import profile_dataset
 from backend.app.graph.state import Subtask
 from backend.app.graph.supervisor import get_graph, supervisor_node
 from backend.app.main import app
+from backend.app.tools.chart_tool import ChartSpec, render_chart_from_spec
 from backend.app.tools.sandbox_exec import execute_code_in_sandbox
 
 DATA_DIR = Path(get_settings().data_dir)
 TITANIC_PATH = str((DATA_DIR / "titanic.csv").resolve())
+SUPERSTORE_PATH = str((DATA_DIR / "superstore.csv").resolve())
 
 
 def test_settings_load():
@@ -43,7 +47,7 @@ def test_sandbox_safe_execution():
 
 
 def test_sandbox_security_blocks_dangerous_imports():
-    """Verify sandbox rejects unauthorized system imports."""
+    """Verify AST sandbox rejects unauthorized system imports."""
     res_os = execute_code_in_sandbox("import os\nprint(os.getcwd())", dataset_path=TITANIC_PATH)
     assert res_os["success"] is False
     assert "Blocked import" in res_os["error"]
@@ -53,26 +57,55 @@ def test_sandbox_security_blocks_dangerous_imports():
     assert "Blocked import" in res_sub["error"]
 
 
-def test_schema_info_generation():
-    """Verify schema info string generator extracts column names and sample rows."""
-    info = _get_schema_info(TITANIC_PATH)
-    assert "Total rows: 891" in info
-    assert "Survived" in info
-    assert "Pclass" in info
+def test_data_profiler_agent():
+    """Verify Data Profiler computes accurate missingness, stats, and correlations."""
+    prof = profile_dataset(TITANIC_PATH)
+    assert prof["row_count"] == 891
+    assert prof["column_count"] == 12
+    assert "Age" in prof["numerical_stats"]
+    assert prof["numerical_stats"]["Age"]["mean"] == 29.7
+    assert prof["numerical_stats"]["Age"]["outlier_count"] == 11
+    assert len(prof["high_correlations"]) >= 1
 
 
-def test_supervisor_routes_to_coder():
-    """Verify supervisor routes valid input with dataset to coder."""
-    state = {
+def test_chart_generation_tool():
+    """Verify chart tool renders and outputs a valid PNG image file."""
+    df = pd.read_csv(TITANIC_PATH, encoding="latin1")
+    spec = ChartSpec(
+        chart_type="bar",
+        x="Pclass",
+        y="Survived",
+        aggregation="mean",
+        title="Class Survival Test",
+    )
+    res = render_chart_from_spec(spec, df)
+    assert res["success"] is True
+    assert res["chart_path"] is not None
+    assert Path(res["chart_path"]).exists()
+    assert len(res["base64"]) > 100
+
+
+def test_supervisor_routes_to_profiler_then_coder():
+    """Verify supervisor routes to profiler first if profile missing, then to coder."""
+    state_without_profile = {
         "messages": [HumanMessage(content="What is the average fare?")],
         "dataset_path": TITANIC_PATH,
+        "dataset_profile": None,
     }
-    cmd = supervisor_node(state)
-    assert cmd.goto == "coder"
+    cmd1 = supervisor_node(state_without_profile)
+    assert cmd1.goto == "profiler"
+
+    state_with_profile = {
+        "messages": [HumanMessage(content="What is the average fare?")],
+        "dataset_path": TITANIC_PATH,
+        "dataset_profile": {"dataset_name": "titanic.csv"},
+    }
+    cmd2 = supervisor_node(state_with_profile)
+    assert cmd2.goto == "coder"
 
 
 def test_fastapi_endpoints():
-    """Verify FastAPI /health and /api/sample-datasets endpoints."""
+    """Verify FastAPI /health, /api/sample-datasets, and /api/profile endpoints."""
     client = TestClient(app)
     health = client.get("/health")
     assert health.status_code == 200
@@ -82,3 +115,7 @@ def test_fastapi_endpoints():
     assert datasets.status_code == 200
     names = [d["name"] for d in datasets.json()]
     assert "titanic.csv" in names
+
+    profile_res = client.get(f"/api/profile?dataset_path={TITANIC_PATH}")
+    assert profile_res.status_code == 200
+    assert profile_res.json()["row_count"] == 891
