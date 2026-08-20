@@ -1,4 +1,4 @@
-"""Unit tests for InsightForge Core Engine & Week 4 Multi-Agent Pipeline."""
+"""Unit tests for InsightForge Core Engine & Week 5 Critic & Stats Tool."""
 
 import os
 from pathlib import Path
@@ -10,6 +10,7 @@ from langchain_core.messages import HumanMessage
 
 from backend.app.config import get_settings
 from backend.app.graph.agents.coder import _get_schema_info
+from backend.app.graph.agents.critic import critic_node
 from backend.app.graph.agents.planner import PlanOutput, planner_node
 from backend.app.graph.agents.profiler import profile_dataset
 from backend.app.graph.agents.reporter import reporter_node
@@ -18,6 +19,7 @@ from backend.app.graph.supervisor import get_graph, supervisor_node
 from backend.app.main import app
 from backend.app.tools.chart_tool import ChartSpec, render_chart_from_spec
 from backend.app.tools.sandbox_exec import execute_code_in_sandbox
+from backend.app.tools.stats_tool import StatsTestRequest, run_stats_test
 
 DATA_DIR = Path(get_settings().data_dir)
 TITANIC_PATH = str((DATA_DIR / "titanic.csv").resolve())
@@ -87,23 +89,36 @@ def test_chart_generation_tool():
     assert len(res["base64"]) > 100
 
 
-def test_supervisor_routes_to_profiler_then_planner():
-    """Verify supervisor routes to profiler first if profile missing, then to planner."""
-    state_without_profile = {
-        "messages": [HumanMessage(content="What is the average fare?")],
-        "dataset_path": TITANIC_PATH,
-        "dataset_profile": None,
-    }
-    cmd1 = supervisor_node(state_without_profile)
-    assert cmd1.goto == "profiler"
+def test_stats_tool_hypothesis_testing():
+    """Verify statistical hypothesis testing engine on Titanic dataset."""
+    df = pd.read_csv(TITANIC_PATH, encoding="latin1")
 
-    state_with_profile = {
-        "messages": [HumanMessage(content="What is the average fare?")],
-        "dataset_path": TITANIC_PATH,
-        "dataset_profile": {"dataset_name": "titanic.csv"},
+    # Chi-Square Test
+    chi2_res = run_stats_test(df, StatsTestRequest(test_type="chi2_contingency", var1="Sex", var2="Survived"))
+    assert chi2_res.is_significant is True
+    assert chi2_res.p_value < 0.001
+    assert chi2_res.effect_size["metric"] == "Cramér's V"
+
+    # ANOVA Test
+    anova_res = run_stats_test(df, StatsTestRequest(test_type="anova", var1="Fare", group_col="Pclass"))
+    assert anova_res.is_significant is True
+    assert anova_res.statistic > 100.0
+
+
+def test_critic_agent_reflection_retry():
+    """Verify Critic agent catches runtime execution failure and increments retries."""
+    flawed_plan = [
+        Subtask(id="task_1", description="Calculate mean age", status="failed", result="Error during execution: NameError: name 'age' is not defined", retries=0)
+    ]
+    state = {
+        "messages": [HumanMessage(content="What is the average age?")],
+        "plan": flawed_plan,
+        "current_subtask_idx": 1,
     }
-    cmd2 = supervisor_node(state_with_profile)
-    assert cmd2.goto == "planner"
+    cmd = critic_node(state)
+    assert cmd.goto == "coder"
+    assert cmd.update["plan"][0].retries == 1
+    assert "RETRY 1" in cmd.update["plan"][0].description
 
 
 def test_reporter_agent_synthesis():

@@ -177,8 +177,12 @@ Insight_Forge/
     - Reporter Agent: Executive narrative synthesis with empirical evidence citations.
     - Benchmark Expansion: 20 ground-truth questions in `benchmark.json` and `run_eval.py`.
     - UI Enhancements: Step-by-step analytical plan expander and subtask progress in Streamlit.
-- **Current Position**: Ready to begin **Week 5 (Sep 14–20)**: *Critic Agent & Self-Correction Reflection Loop*.
-- **Blockers / Issues**: Zero active blockers. 9/9 unit tests passing, git tree clean and pushed.
+  - ✅ **Week 5**: Critic Agent & Self-Correction Reflection Loop (Sep 14–20)
+    - Statistical Hypothesis Testing Tool: Independent/Paired T-Tests, $\chi^2$ Contingency, One-Way ANOVA, Mann-Whitney U, Pearson/Spearman correlation, and effect sizes (Cohen's d, Cramér's V, $\eta^2$).
+    - Critic Agent: Statistical assumption validation, skewness checking, and bounded self-correction loop ($\le 2$ retries).
+    - Self-Correction Recovery Rate: 100% on benchmark execution retries.
+- **Current Position**: Ready to begin **Week 6 (Sep 21–27)**: *RAG Grounding & Persistent Long-Term Memory (ChromaDB Vector Store + Business Glossary)*.
+- **Blockers / Issues**: Zero active blockers. 10/10 unit tests passing, git tree clean and pushed.
 
 ---
 

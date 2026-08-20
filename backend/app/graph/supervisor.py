@@ -3,8 +3,9 @@
 Coordinates:
 - Profiler: Automated schema & distribution profiling.
 - Planner: Multi-step task decomposition into Subtasks.
-- Coder: Sandboxed execution loop across subtasks.
-- Reporter: Executive synthesis of completed findings.
+- Coder: Sandboxed execution of subtasks.
+- Critic: Statistical validation & bounded self-correction loop (<= 2 retries).
+- Reporter: Executive synthesis of verified findings.
 """
 
 from langchain_core.messages import AIMessage
@@ -13,6 +14,7 @@ from langgraph.graph import END, StateGraph
 from langgraph.types import Command
 
 from backend.app.graph.agents.coder import coder_node
+from backend.app.graph.agents.critic import critic_node
 from backend.app.graph.agents.planner import planner_node
 from backend.app.graph.agents.profiler import profiler_node
 from backend.app.graph.agents.reporter import reporter_node
@@ -53,12 +55,13 @@ def build_graph() -> StateGraph:
     graph.add_node("profiler", profiler_node)
     graph.add_node("planner", planner_node)
     graph.add_node("coder", coder_node)
+    graph.add_node("critic", critic_node)
     graph.add_node("reporter", reporter_node)
 
     # Set master entrypoint
     graph.set_entry_point("supervisor")
 
-    # Static edges (dynamic routing handled via Command in nodes)
+    # Static edges
     graph.add_edge("profiler", "planner")
     graph.add_edge("planner", "coder")
     graph.add_edge("reporter", END)

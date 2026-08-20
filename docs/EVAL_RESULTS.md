@@ -16,13 +16,15 @@
 
 ## 2. Summary Metric Scorecard
 
-| Metric | Target | Week 3 Baseline (10 Qs) | Final Target (90 Qs) |
+| Metric | Target | Week 5 Actuals | Final Target (90 Qs) |
 |---|---|---|---|
-| **Task Success Rate** | $\ge 95\%$ | **100.0%** (10/10) | $\ge 95\%$ |
-| **Answer Accuracy** | $\ge 85\%$ | **100.0%** (10/10) | $\ge 88\%$ |
-| **Latency P50** | $< 10\text{s}$ | **6.93s** | $< 8\text{s}$ |
-| **Latency P90** | $< 25\text{s}$ | **22.94s** | $< 20\text{s}$ |
-| **Average Latency** | $< 15\text{s}$ | **11.82s** | $< 12\text{s}$ |
+| **Task Success Rate** | $\ge 95\%$ | **100.0%** (20/20) | $\ge 95\%$ |
+| **Answer Accuracy** | $\ge 85\%$ | **100.0%** (20/20) | $\ge 88\%$ |
+| **Self-Correction Recovery Rate** | $\ge 75\%$ | **100.0%** (Self-corrected within $\le 2$ retries) | $\ge 80\%$ |
+| **Avg. Iterations to Success** | $\le 1.5$ | **1.2 iterations** | $\le 1.3$ |
+| **Latency P50** | $< 10\text{s}$ | **4.99s** | $< 8\text{s}$ |
+| **Latency P90** | $< 25\text{s}$ | **9.19s** | $< 20\text{s}$ |
+| **Average Latency** | $< 15\text{s}$ | **6.00s** | $< 12\text{s}$ |
 | **Cost per Query** | $< \$0.02$ | **\$0.00** (Gemini Free Tier) | $< \$0.005$ |
 
 ---

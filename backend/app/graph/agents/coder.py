@@ -170,20 +170,11 @@ def coder_node(state: dict) -> Command:
             )
         ]
 
-    # Decide next step: loop to coder if subtasks remain, else route to reporter
-    if next_idx < len(updated_plan):
-        return Command(
-            update={
-                "plan": updated_plan,
-                "current_subtask_idx": next_idx,
-            },
-            goto="coder"
-        )
-    else:
-        return Command(
-            update={
-                "plan": updated_plan,
-                "current_subtask_idx": next_idx,
-            },
-            goto="reporter"
-        )
+    # Forward to Critic agent for validation and reflection
+    return Command(
+        update={
+            "plan": updated_plan,
+            "current_subtask_idx": next_idx,
+        },
+        goto="critic"
+    )
