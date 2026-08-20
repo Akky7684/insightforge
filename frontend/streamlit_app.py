@@ -91,29 +91,12 @@ def load_dataset(file_path: str, file_name: str):
         return False
 
 
-def query_agent(prompt: str) -> str:
-    """Send natural language query to FastAPI backend or graph fallback."""
+def query_agent(prompt: str) -> dict:
+    """Send natural language query to LangGraph multi-agent pipeline."""
     dataset_path = st.session_state.active_dataset_path
     if not dataset_path:
-        return "⚠️ Please select or upload a dataset first!"
+        return {"response": "⚠️ Please select or upload a dataset first!", "plan": []}
 
-    # Try FastAPI backend first
-    try:
-        resp = requests.post(
-            f"{API_BASE_URL}/chat",
-            json={
-                "message": prompt,
-                "dataset_path": dataset_path,
-                "session_id": st.session_state.session_id,
-            },
-            timeout=50,
-        )
-        if resp.status_code == 200:
-            return resp.json().get("response", "No response received.")
-    except Exception:
-        pass
-
-    # Direct in-process graph fallback
     try:
         from langchain_core.messages import HumanMessage
         from backend.app.graph.supervisor import get_graph
@@ -134,13 +117,34 @@ def query_agent(prompt: str) -> str:
         }
         res = graph.invoke(state_input, config=config)
         ai_msgs = [m for m in res["messages"] if m.type == "ai"]
-        return ai_msgs[-1].content if ai_msgs else "Analysis completed."
+        ans_text = ai_msgs[-1].content if ai_msgs else "Analysis completed."
+        plan_list = res.get("plan", [])
+        return {"response": ans_text, "plan": plan_list}
     except Exception as e:
-        return f"❌ Execution error: {e}"
+        return {"response": f"❌ Execution error: {e}", "plan": []}
 
 
-def render_message_content(content: str):
-    """Render text message and extract/display any embedded charts."""
+def render_message_content(msg_data):
+    """Render text message, subtask execution plan, and any embedded charts."""
+    if isinstance(msg_data, dict):
+        content = msg_data.get("content", "")
+        plan = msg_data.get("plan", [])
+    else:
+        content = str(msg_data)
+        plan = []
+
+    # Display subtask execution plan expander if multi-step
+    if plan and len(plan) > 1:
+        with st.expander(f"🧩 Multi-Step Analytical Plan ({len(plan)} Steps Completed)"):
+            for i, st_item in enumerate(plan, 1):
+                st_desc = st_item.description if hasattr(st_item, "description") else st_item.get("description", "")
+                st_res = st_item.result if hasattr(st_item, "result") else st_item.get("result", "")
+                st.markdown(f"**Step {i}:** `{st_desc}`")
+                if st_res:
+                    # Clean out chart tags in subtask summary
+                    clean_res = re.sub(r"\[CHART:.*?\]", "", st_res).strip()
+                    st.caption(f"↳ {clean_res[:200]}..." if len(clean_res) > 200 else f"↳ {clean_res}")
+
     # Check for [CHART:<path>] tags
     chart_matches = re.findall(r"\[CHART:(.*?)\]", content)
     cleaned_text = re.sub(r"\[CHART:.*?\]", "", content).strip()
@@ -152,7 +156,7 @@ def render_message_content(content: str):
         if os.path.exists(chart_path):
             st.image(chart_path, caption="Generated Visualization", use_container_width=True)
         else:
-            st.caption(f"📊 Chart saved: `{Path(chart_path).name}`")
+            st.caption(f"📊 Chart generated: `{Path(chart_path).name}`")
 
 
 # --- Sidebar ---
@@ -237,7 +241,7 @@ with tab_chat:
     # Display History
     for msg in st.session_state.messages:
         with st.chat_message(msg["role"]):
-            render_message_content(msg["content"])
+            render_message_content(msg)
 
     # Quick Action Buttons
     if not st.session_state.messages and st.session_state.active_dataset_name == "titanic.csv":
@@ -247,32 +251,32 @@ with tab_chat:
             p = "What was the survival rate of male vs female passengers?"
             st.session_state.messages.append({"role": "user", "content": p})
             with st.spinner("Analyzing in sandbox..."):
-                ans = query_agent(p)
-            st.session_state.messages.append({"role": "assistant", "content": ans})
+                res = query_agent(p)
+            st.session_state.messages.append({"role": "assistant", "content": res["response"], "plan": res["plan"]})
             st.rerun()
 
         if c2.button("Plot Class Survival"):
             p = "Plot a bar chart showing survival rate by passenger class (Pclass)."
             st.session_state.messages.append({"role": "user", "content": p})
             with st.spinner("Generating visualization..."):
-                ans = query_agent(p)
-            st.session_state.messages.append({"role": "assistant", "content": ans})
+                res = query_agent(p)
+            st.session_state.messages.append({"role": "assistant", "content": res["response"], "plan": res["plan"]})
             st.rerun()
 
         if c3.button("Fare Distribution"):
             p = "What is the average, median, and max fare paid?"
             st.session_state.messages.append({"role": "user", "content": p})
             with st.spinner("Analyzing in sandbox..."):
-                ans = query_agent(p)
-            st.session_state.messages.append({"role": "assistant", "content": ans})
+                res = query_agent(p)
+            st.session_state.messages.append({"role": "assistant", "content": res["response"], "plan": res["plan"]})
             st.rerun()
 
         if c4.button("Age Outliers"):
             p = "How many passengers have age values considered statistical outliers?"
             st.session_state.messages.append({"role": "user", "content": p})
             with st.spinner("Analyzing in sandbox..."):
-                ans = query_agent(p)
-            st.session_state.messages.append({"role": "assistant", "content": ans})
+                res = query_agent(p)
+            st.session_state.messages.append({"role": "assistant", "content": res["response"], "plan": res["plan"]})
             st.rerun()
 
     # Chat Input
@@ -283,10 +287,10 @@ with tab_chat:
 
         with st.chat_message("assistant"):
             with st.spinner("InsightForge agents executing in sandbox..."):
-                response = query_agent(user_query)
-                render_message_content(response)
+                res = query_agent(user_query)
+                render_message_content({"content": res["response"], "plan": res["plan"]})
 
-        st.session_state.messages.append({"role": "assistant", "content": response})
+        st.session_state.messages.append({"role": "assistant", "content": res["response"], "plan": res["plan"]})
 
 
 # --- TAB 2: Dataset Deep Profile ---

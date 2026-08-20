@@ -137,18 +137,11 @@ def profile_dataset(file_path: str) -> Dict[str, Any]:
     }
 
 
-def profiler_node(state: dict) -> Command:
-    """LangGraph node: Data Profiler agent.
-    
-    Computes statistical profile of active dataset if not already present in state,
-    then forwards execution to the Coder agent.
-    """
+def profiler_node(state: dict) -> dict:
+    """LangGraph node: Data Profiler agent."""
     dataset_path = state.get("dataset_path")
     if not dataset_path or not Path(dataset_path).exists():
-        return Command(
-            update={"messages": [AIMessage(content="Error: Dataset file not found for profiling.")]},
-            goto="coder"
-        )
+        return {"messages": [AIMessage(content="Error: Dataset file not found for profiling.")]}
 
     # Compute or reuse cached profile
     existing_profile = state.get("dataset_profile")
@@ -157,7 +150,4 @@ def profiler_node(state: dict) -> Command:
     else:
         profile = existing_profile
 
-    return Command(
-        update={"dataset_profile": profile},
-        goto="coder"
-    )
+    return {"dataset_profile": profile}

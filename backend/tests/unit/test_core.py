@@ -1,4 +1,4 @@
-"""Unit tests for InsightForge Core Engine & Week 3 Capabilities."""
+"""Unit tests for InsightForge Core Engine & Week 4 Multi-Agent Pipeline."""
 
 import os
 from pathlib import Path
@@ -10,7 +10,9 @@ from langchain_core.messages import HumanMessage
 
 from backend.app.config import get_settings
 from backend.app.graph.agents.coder import _get_schema_info
+from backend.app.graph.agents.planner import PlanOutput, planner_node
 from backend.app.graph.agents.profiler import profile_dataset
+from backend.app.graph.agents.reporter import reporter_node
 from backend.app.graph.state import Subtask
 from backend.app.graph.supervisor import get_graph, supervisor_node
 from backend.app.main import app
@@ -25,7 +27,7 @@ SUPERSTORE_PATH = str((DATA_DIR / "superstore.csv").resolve())
 def test_settings_load():
     """Verify settings load properly with valid data directory."""
     settings = get_settings()
-    assert settings.gemini_flash_model == "gemini-3.6-flash"
+    assert "flash" in settings.gemini_flash_model
     assert Path(settings.data_dir).exists()
 
 
@@ -85,8 +87,8 @@ def test_chart_generation_tool():
     assert len(res["base64"]) > 100
 
 
-def test_supervisor_routes_to_profiler_then_coder():
-    """Verify supervisor routes to profiler first if profile missing, then to coder."""
+def test_supervisor_routes_to_profiler_then_planner():
+    """Verify supervisor routes to profiler first if profile missing, then to planner."""
     state_without_profile = {
         "messages": [HumanMessage(content="What is the average fare?")],
         "dataset_path": TITANIC_PATH,
@@ -101,7 +103,22 @@ def test_supervisor_routes_to_profiler_then_coder():
         "dataset_profile": {"dataset_name": "titanic.csv"},
     }
     cmd2 = supervisor_node(state_with_profile)
-    assert cmd2.goto == "coder"
+    assert cmd2.goto == "planner"
+
+
+def test_reporter_agent_synthesis():
+    """Verify reporter agent combines executed subtask outputs cleanly."""
+    plan = [
+        Subtask(id="task_1", description="Calculate mean age", status="success", result="Mean age: 29.7"),
+        Subtask(id="task_2", description="Calculate survival %", status="success", result="Survival: 38.38%"),
+    ]
+    state = {
+        "messages": [HumanMessage(content="Summarize age and survival stats.")],
+        "plan": plan,
+    }
+    cmd = reporter_node(state)
+    report_text = cmd["messages"][0].content
+    assert "29.7" in report_text or "38.38" in report_text
 
 
 def test_fastapi_endpoints():

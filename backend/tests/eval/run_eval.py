@@ -135,6 +135,9 @@ def run_evaluation(benchmark_file: Path = BENCHMARK_PATH) -> Dict[str, Any]:
             "latency": round(latency, 2),
         })
 
+        # Pacing delay between questions to respect free-tier rate limits
+        time.sleep(3)
+
     # Metric computations
     total_q = len(results)
     successful_runs = sum(1 for r in results if not r["crashed"])

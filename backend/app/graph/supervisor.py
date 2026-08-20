@@ -1,9 +1,10 @@
 """Supervisor agent — master router for the multi-agent graph.
 
-Routes tasks to:
-- Profiler: When a dataset has not been profiled yet.
-- Coder: For writing and executing analytical/statistical code.
-- (Upcoming in Weeks 4-7: Planner, Critic, RAG, Reporter).
+Coordinates:
+- Profiler: Automated schema & distribution profiling.
+- Planner: Multi-step task decomposition into Subtasks.
+- Coder: Sandboxed execution loop across subtasks.
+- Reporter: Executive synthesis of completed findings.
 """
 
 from langchain_core.messages import AIMessage
@@ -12,16 +13,14 @@ from langgraph.graph import END, StateGraph
 from langgraph.types import Command
 
 from backend.app.graph.agents.coder import coder_node
+from backend.app.graph.agents.planner import planner_node
 from backend.app.graph.agents.profiler import profiler_node
+from backend.app.graph.agents.reporter import reporter_node
 from backend.app.graph.state import InsightForgeState
 
 
 def supervisor_node(state: dict) -> Command:
-    """Route user turn to the appropriate agent.
-
-    If dataset profile is missing, route through Profiler first.
-    Otherwise, route directly to Coder.
-    """
+    """Route user turn through Profiler or Planner."""
     messages = state.get("messages", [])
 
     if not messages:
@@ -41,8 +40,8 @@ def supervisor_node(state: dict) -> Command:
     if not state.get("dataset_profile"):
         return Command(goto="profiler")
 
-    # Otherwise route directly to Coder
-    return Command(goto="coder")
+    # Otherwise route to Planner to decompose task
+    return Command(goto="planner")
 
 
 def build_graph() -> StateGraph:
@@ -52,14 +51,17 @@ def build_graph() -> StateGraph:
     # Add agent nodes
     graph.add_node("supervisor", supervisor_node)
     graph.add_node("profiler", profiler_node)
+    graph.add_node("planner", planner_node)
     graph.add_node("coder", coder_node)
+    graph.add_node("reporter", reporter_node)
 
     # Set master entrypoint
     graph.set_entry_point("supervisor")
 
-    # Graph edges
-    graph.add_edge("profiler", "coder")
-    graph.add_edge("coder", END)
+    # Static edges (dynamic routing handled via Command in nodes)
+    graph.add_edge("profiler", "planner")
+    graph.add_edge("planner", "coder")
+    graph.add_edge("reporter", END)
 
     # Compile with memory checkpointer
     checkpointer = MemorySaver()

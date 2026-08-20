@@ -171,8 +171,14 @@ Insight_Forge/
     - Chart Tool: Pydantic-validated plotting engine with automatic figure capture.
     - Evaluation Benchmark: 10 ground-truth questions (100% accuracy, 0 crashes).
     - UI Integration: Deep Profile dashboard tab & inline chart rendering in Streamlit.
-- **Current Position**: Ready to begin **Week 4 (Sep 7–13)**: *Planner Agent + Multi-Step Complex Task Decomposition*.
-- **Blockers / Issues**: Zero active blockers. 8/8 unit tests passing, evaluation harness operational, git tree clean and pushed.
+  - ✅ **Week 4**: Planner Agent & Multi-Step Task Decomposition (Sep 7–13)
+    - Planner Agent: Structured `PlanOutput` task decomposition with Gemini.
+    - Multi-Step LangGraph Loop: Sequential execution of subtasks with prior context passing.
+    - Reporter Agent: Executive narrative synthesis with empirical evidence citations.
+    - Benchmark Expansion: 20 ground-truth questions in `benchmark.json` and `run_eval.py`.
+    - UI Enhancements: Step-by-step analytical plan expander and subtask progress in Streamlit.
+- **Current Position**: Ready to begin **Week 5 (Sep 14–20)**: *Critic Agent & Self-Correction Reflection Loop*.
+- **Blockers / Issues**: Zero active blockers. 9/9 unit tests passing, git tree clean and pushed.
 
 ---
 

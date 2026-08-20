@@ -24,7 +24,7 @@ class Settings(BaseSettings):
 
     # --- Google Gemini ---
     google_api_key: str = ""
-    gemini_flash_model: str = "gemini-3.6-flash"
+    gemini_flash_model: str = "gemini-3.5-flash-lite"
     gemini_pro_model: str = "gemini-3.1-pro-preview"
     gemini_temperature: float = 0.0  # Deterministic for data analysis
 
@@ -81,4 +81,5 @@ def get_llm(model_type: str = "flash"):
         model=model_name,
         google_api_key=settings.google_api_key,
         temperature=settings.gemini_temperature,
+        max_retries=3,
     )

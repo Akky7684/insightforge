@@ -1,6 +1,6 @@
 {
-  "version": "1.0",
-  "description": "InsightForge Evaluation Benchmark — Baseline 10 questions across Titanic and Superstore datasets",
+  "version": "1.1",
+  "description": "InsightForge Evaluation Benchmark — 20 ground-truth questions across Titanic and Superstore datasets",
   "questions": [
     {
       "id": "eval_01",
@@ -101,6 +101,106 @@
       "ground_truth": 725457.82,
       "acceptable_strings": ["725457.82", "725,457.82"],
       "tolerance_pct": 1.0
+    },
+    {
+      "id": "eval_11",
+      "dataset": "titanic.csv",
+      "category": "multi_step_conditional",
+      "question": "What was the survival rate percentage for passengers under 18 years old?",
+      "expected_type": "percentage",
+      "ground_truth": 53.98,
+      "acceptable_strings": ["53.98", "54.0", "53.98%"],
+      "tolerance_pct": 1.5
+    },
+    {
+      "id": "eval_12",
+      "dataset": "titanic.csv",
+      "category": "multi_step_distribution",
+      "question": "What is the median fare for 1st class vs 3rd class passengers?",
+      "expected_type": "text_numbers",
+      "ground_truth": {"1st": 60.29, "3rd": 8.05},
+      "acceptable_strings": ["60.29", "8.05", "60.3"],
+      "tolerance_pct": 1.0
+    },
+    {
+      "id": "eval_13",
+      "dataset": "titanic.csv",
+      "category": "multi_step_aggregation",
+      "question": "How many passengers embarked at port C (Cherbourg) and what was their survival percentage?",
+      "expected_type": "multi_metric",
+      "ground_truth": {"count": 168, "rate": 55.36},
+      "acceptable_strings": ["168", "55.36", "55.4%"],
+      "tolerance_pct": 1.0
+    },
+    {
+      "id": "eval_14",
+      "dataset": "titanic.csv",
+      "category": "conditional_extremum",
+      "question": "What was the highest fare paid by a 3rd class passenger?",
+      "expected_type": "number",
+      "ground_truth": 69.55,
+      "acceptable_strings": ["69.55", "56.4954"],
+      "tolerance_pct": 1.0
+    },
+    {
+      "id": "eval_15",
+      "dataset": "titanic.csv",
+      "category": "categorical_grouping",
+      "question": "Which gender had a higher survival rate and by how much percentage points approximately?",
+      "expected_type": "categorical_text",
+      "ground_truth": "Female",
+      "acceptable_strings": ["female", "women", "55"],
+      "tolerance_pct": 0.0
+    },
+    {
+      "id": "eval_16",
+      "dataset": "superstore.csv",
+      "category": "multi_step_ranking",
+      "question": "What are the top 3 product Sub-Categories by total sales in the West region?",
+      "expected_type": "list_categories",
+      "ground_truth": "Chairs, Phones, Tables",
+      "acceptable_strings": ["Chairs", "Phones", "Tables"],
+      "tolerance_pct": 0.0
+    },
+    {
+      "id": "eval_17",
+      "dataset": "superstore.csv",
+      "category": "multi_step_comparison",
+      "question": "What is the average discount in the Central region as a percentage?",
+      "expected_type": "percentage",
+      "ground_truth": 24.04,
+      "acceptable_strings": ["24.04", "24.04%", "24%", "0.24"],
+      "tolerance_pct": 1.5
+    },
+    {
+      "id": "eval_18",
+      "dataset": "superstore.csv",
+      "category": "grouping_extremum",
+      "question": "Which Customer Segment generated the highest total profit?",
+      "expected_type": "categorical_string",
+      "ground_truth": "Consumer",
+      "acceptable_strings": ["Consumer", "consumer", "134119"],
+      "tolerance_pct": 0.0
+    },
+    {
+      "id": "eval_19",
+      "dataset": "superstore.csv",
+      "category": "multi_step_segmentation",
+      "question": "What is the total profit for the 'Home Office' segment?",
+      "expected_type": "currency_number",
+      "ground_truth": 60298.68,
+      "acceptable_strings": ["60298.68", "60,298.68", "60299"],
+      "tolerance_pct": 1.0
+    },
+    {
+      "id": "eval_20",
+      "dataset": "superstore.csv",
+      "category": "conditional_extremum",
+      "question": "Which state in the dataset generated the largest total negative profit (highest loss)?",
+      "expected_type": "categorical_string",
+      "ground_truth": "Texas",
+      "acceptable_strings": ["Texas", "texas", "-25729"],
+      "tolerance_pct": 0.0
     }
   ]
 }
