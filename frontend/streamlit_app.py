@@ -158,6 +158,10 @@ def render_message_content(msg_data):
         else:
             st.caption(f"📊 Chart generated: `{Path(chart_path).name}`")
 
+    # Display Multi-Agent Collaboration Badge
+    if plan:
+        st.caption("🤖 **Active Agents:** 🕵️ *Profiler* • 📚 *RAG Grounding* • 📋 *Planner* • 💻 *Coder* • 🛡️ *Critic* • 📝 *Reporter*")
+
 
 # --- Sidebar ---
 with st.sidebar:

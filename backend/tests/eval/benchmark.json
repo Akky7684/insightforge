@@ -1,6 +1,6 @@
 {
-  "version": "1.1",
-  "description": "InsightForge Evaluation Benchmark — 20 ground-truth questions across Titanic and Superstore datasets",
+  "version": "1.2",
+  "description": "InsightForge Cross-Dataset Evaluation Benchmark — 35 ground-truth questions across all 5 evaluation datasets",
   "questions": [
     {
       "id": "eval_01",
@@ -201,6 +201,156 @@
       "ground_truth": "Texas",
       "acceptable_strings": ["Texas", "texas", "-25729"],
       "tolerance_pct": 0.0
+    },
+    {
+      "id": "eval_21",
+      "dataset": "ecommerce.csv",
+      "category": "cardinality_count",
+      "question": "What is the total number of transaction records (rows) in the e-commerce dataset?",
+      "expected_type": "number",
+      "ground_truth": 541909,
+      "acceptable_strings": ["541909", "541,909"],
+      "tolerance_pct": 0.0
+    },
+    {
+      "id": "eval_22",
+      "dataset": "ecommerce.csv",
+      "category": "grouping_extremum",
+      "question": "Which country generated the highest number of transactions in the e-commerce dataset?",
+      "expected_type": "categorical_string",
+      "ground_truth": "United Kingdom",
+      "acceptable_strings": ["United Kingdom", "UK"],
+      "tolerance_pct": 0.0
+    },
+    {
+      "id": "eval_23",
+      "dataset": "ecommerce.csv",
+      "category": "cardinality_count",
+      "question": "How many unique customer IDs (CustomerID) are present in the e-commerce dataset?",
+      "expected_type": "number",
+      "ground_truth": 4372,
+      "acceptable_strings": ["4372", "4,372"],
+      "tolerance_pct": 0.0
+    },
+    {
+      "id": "eval_24",
+      "dataset": "ecommerce.csv",
+      "category": "financial_aggregation",
+      "question": "What is the total overall revenue (Quantity * UnitPrice) across all transactions?",
+      "expected_type": "currency_number",
+      "ground_truth": 9747747.93,
+      "acceptable_strings": ["9747747.93", "9,747,747.93", "9.75M"],
+      "tolerance_pct": 1.5
+    },
+    {
+      "id": "eval_25",
+      "dataset": "ecommerce.csv",
+      "category": "conditional_count",
+      "question": "How many transactions in the e-commerce dataset were cancelled (InvoiceNo starting with 'C')?",
+      "expected_type": "number",
+      "ground_truth": 9288,
+      "acceptable_strings": ["9288", "9,288"],
+      "tolerance_pct": 0.0
+    },
+    {
+      "id": "eval_26",
+      "dataset": "ipl.csv",
+      "category": "cardinality_count",
+      "question": "What is the total number of deliveries recorded in the IPL dataset?",
+      "expected_type": "number",
+      "ground_truth": 99120,
+      "acceptable_strings": ["99120", "99,120"],
+      "tolerance_pct": 0.0
+    },
+    {
+      "id": "eval_27",
+      "dataset": "ipl.csv",
+      "category": "grouping_extremum",
+      "question": "Which batsman scored the most total runs in this IPL dataset?",
+      "expected_type": "categorical_string",
+      "ground_truth": "Sam Billings",
+      "acceptable_strings": ["Sam Billings", "Billings", "4012"],
+      "tolerance_pct": 0.0
+    },
+    {
+      "id": "eval_28",
+      "dataset": "ipl.csv",
+      "category": "conditional_count",
+      "question": "How many total sixes (batsman_runs == 6) were hit across all deliveries in the dataset?",
+      "expected_type": "number",
+      "ground_truth": 4927,
+      "acceptable_strings": ["4927", "4,927"],
+      "tolerance_pct": 0.0
+    },
+    {
+      "id": "eval_29",
+      "dataset": "ipl.csv",
+      "category": "cardinality_count",
+      "question": "How many unique matches (match_id) are covered in the IPL dataset?",
+      "expected_type": "number",
+      "ground_truth": 413,
+      "acceptable_strings": ["413"],
+      "tolerance_pct": 0.0
+    },
+    {
+      "id": "eval_30",
+      "dataset": "ipl.csv",
+      "category": "factual_aggregation",
+      "question": "What is the total number of extra runs (extra_runs) conceded across all deliveries?",
+      "expected_type": "number",
+      "ground_truth": 6620,
+      "acceptable_strings": ["6620", "6,620"],
+      "tolerance_pct": 2.0
+    },
+    {
+      "id": "eval_31",
+      "dataset": "synthetic_anomaly.csv",
+      "category": "cardinality_count",
+      "question": "What is the total number of transactions in the synthetic anomaly dataset?",
+      "expected_type": "number",
+      "ground_truth": 1000,
+      "acceptable_strings": ["1000", "1,000"],
+      "tolerance_pct": 0.0
+    },
+    {
+      "id": "eval_32",
+      "dataset": "synthetic_anomaly.csv",
+      "category": "statistical_aggregation",
+      "question": "What is the average transaction total_amount in the synthetic anomaly dataset?",
+      "expected_type": "number",
+      "ground_truth": 284.60,
+      "acceptable_strings": ["284.6", "284.60"],
+      "tolerance_pct": 1.0
+    },
+    {
+      "id": "eval_33",
+      "dataset": "synthetic_anomaly.csv",
+      "category": "statistical_extremum",
+      "question": "What is the maximum transaction total_amount recorded?",
+      "expected_type": "number",
+      "ground_truth": 10653.40,
+      "acceptable_strings": ["10653.4", "10,653.40", "10653"],
+      "tolerance_pct": 1.0
+    },
+    {
+      "id": "eval_34",
+      "dataset": "synthetic_anomaly.csv",
+      "category": "grouping_extremum",
+      "question": "Which region recorded the highest number of transactions in the anomaly dataset?",
+      "expected_type": "categorical_string",
+      "ground_truth": "South",
+      "acceptable_strings": ["South", "south", "265"],
+      "tolerance_pct": 0.0
+    },
+    {
+      "id": "eval_35",
+      "dataset": "synthetic_anomaly.csv",
+      "category": "statistical_aggregation",
+      "question": "What is the average customer age in the synthetic anomaly dataset?",
+      "expected_type": "number",
+      "ground_truth": 43.63,
+      "acceptable_strings": ["43.63", "43.6"],
+      "tolerance_pct": 1.0
     }
   ]
 }
