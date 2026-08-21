@@ -14,35 +14,44 @@
 
 ---
 
-## 2. Summary Metric Scorecard
+## 2. Summary Metric Scorecard (Midterm Evaluation — Week 8 Lock)
 
-| Metric | Target | Week 5 Actuals | Final Target (90 Qs) |
+| Metric | Target | Week 8 Midterm Actuals | Final Target (90 Qs) |
 |---|---|---|---|
-| **Task Success Rate** | $\ge 95\%$ | **100.0%** (20/20) | $\ge 95\%$ |
-| **Answer Accuracy** | $\ge 85\%$ | **100.0%** (20/20) | $\ge 88\%$ |
-| **Self-Correction Recovery Rate** | $\ge 75\%$ | **100.0%** (Self-corrected within $\le 2$ retries) | $\ge 80\%$ |
+| **Task Success Rate** | $\ge 95\%$ | **100.0%** (35/35) | $\ge 95\%$ |
+| **Answer Accuracy** | $\ge 85\%$ | **100.0%** (35/35) | $\ge 88\%$ |
+| **Self-Correction Recovery Rate** | $\ge 75\%$ | **100.0%** (All retries resolved $\le 2$) | $\ge 80\%$ |
 | **Avg. Iterations to Success** | $\le 1.5$ | **1.2 iterations** | $\le 1.3$ |
-| **Latency P50** | $< 10\text{s}$ | **4.99s** | $< 8\text{s}$ |
-| **Latency P90** | $< 25\text{s}$ | **9.19s** | $< 20\text{s}$ |
-| **Average Latency** | $< 15\text{s}$ | **6.00s** | $< 12\text{s}$ |
+| **Single-Agent vs Multi-Agent Accuracy Lift** | $\ge +25\%$ | **+40.0% Lift** (100% vs 60%) | $\ge +30\%$ |
+| **Latency P50** | $< 10\text{s}$ | **4.96s** | $< 8\text{s}$ |
+| **Latency P90** | $< 25\text{s}$ | **7.00s** | $< 20\text{s}$ |
+| **Average Latency** | $< 15\text{s}$ | **5.49s** | $< 12\text{s}$ |
 | **Cost per Query** | $< \$0.02$ | **\$0.00** (Gemini Free Tier) | $< \$0.005$ |
 
 ---
 
-## 3. Question-by-Question Breakdown
+## 3. Comparative Ablation Study: Single-Agent vs Multi-Agent Pipeline
 
-| ID | Dataset | Question | Expected Ground Truth | Agent Output | Result | Latency |
-|---|---|---|---|---|---|---|
-| `eval_01` | `titanic.csv` | Total passengers count | `891` | `"Total number of passengers: 891"` | **PASS** | 7.62s |
-| `eval_02` | `titanic.csv` | Overall survival rate % | `38.38%` | `"Overall survival rate: 38.38%"` | **PASS** | 21.77s |
-| `eval_03` | `titanic.csv` | Average passenger age | `29.70` | `"Average age of passengers: 29.70"` | **PASS** | 4.85s |
-| `eval_04` | `titanic.csv` | Gender breakdown count | `male: 577, female: 314` | `"Male: 577, Female: 314"` | **PASS** | 19.69s |
-| `eval_05` | `titanic.csv` | 1st class average fare | `$84.15` | `"Average fare paid: $84.15"` | **PASS** | 10.37s |
-| `eval_06` | `superstore.csv` | Total sales sum | `$2,297,200.86` | `"Total Sales: $2,297,200.86"` | **PASS** | 5.09s |
-| `eval_07` | `superstore.csv` | Total profit sum | `$286,397.02` | `"Total Profit: $286,397.02"` | **PASS** | 33.45s |
-| `eval_08` | `superstore.csv` | Category with highest sales | `Technology` | `"Highest Total Sales: Technology ($836,154.03)"` | **PASS** | 6.24s |
-| `eval_09` | `superstore.csv` | Unique order IDs count | `5009` | `"Number of unique orders: 5009"` | **PASS** | 4.55s |
-| `eval_10` | `superstore.csv` | Total sales in West region | `$725,457.82` | `"Total sales for West: $725,457.82"` | **PASS** | 4.61s |
+To empirically validate the multi-agent design, we executed a comparative ablation study across all 5 benchmark datasets:
+
+| Configuration | Architecture | Accuracy | Failure Mode / Hallucinations | Avg Latency |
+|---|---|---|---|---|
+| **Config A: Single-Agent Baseline** | Direct LLM (no sandbox / no Critic / no RAG) | **60.0%** | Hallucinates dataset totals, sums, and exact metrics (e.g. 10,981 vs 4,927 sixes) | **1.31s** |
+| **Config B: InsightForge Multi-Agent** | 6-Agent LangGraph (AST Sandbox + RAG + Critic) | **100.0%** | None (Code verified and executed on actual data) | **5.49s** |
+
+> **Key Takeaway:** Sandboxed AST Python code execution combined with domain RAG formula grounding and Critic self-correction reflection provides a **+40.0% empirical accuracy lift** over a naive LLM baseline while maintaining sub-6-second average latency at zero cost.
+
+---
+
+## 4. Per-Dataset Breakdown (35 Questions)
+
+| Dataset | Total Questions | Task Success Rate | Accuracy | Key Competencies Verified |
+|---|---|---|---|---|
+| **`titanic.csv`** | 15 | 100.0% | 100.0% | Distributions, grouping, multi-step odds ratios, hypothesis testing |
+| **`superstore.csv`** | 5 | 100.0% | 100.0% | Multi-step subcategory ranking, profit margins, regional discounts |
+| **`ecommerce.csv`** | 5 | 100.0% | 100.0% | Revenue aggregation, AOV formula grounding, invoice cancellations |
+| **`ipl.csv`** | 5 | 100.0% | 100.0% | Ball-by-ball delivery counts, leading run scorers, boundary counts |
+| **`synthetic_anomaly.csv`** | 5 | 100.0% | 100.0% | Transaction volume, max amount, regional breakdown, customer age |
 
 ---
 

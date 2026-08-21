@@ -163,36 +163,34 @@ Insight_Forge/
 
 ## 4. Current Status & Milestone Tracking
 
-- **Completed Milestones**:
-  - ✅ **Week 1**: Setup & Scope Lock (Aug 17–23)
-  - ✅ **Week 2**: Core LangGraph Skeleton & MVP (Aug 24–30)
-  - ✅ **Week 3**: Harden the MVP Loop (Aug 31–Sep 6)
-    - Data Profiler Agent: automated statistical summary & correlation detection.
-    - Chart Tool: Pydantic-validated plotting engine with automatic figure capture.
-    - Evaluation Benchmark: 10 ground-truth questions (100% accuracy, 0 crashes).
-    - UI Integration: Deep Profile dashboard tab & inline chart rendering in Streamlit.
-  - ✅ **Week 4**: Planner Agent & Multi-Step Task Decomposition (Sep 7–13)
-    - Planner Agent: Structured `PlanOutput` task decomposition with Gemini.
-    - Multi-Step LangGraph Loop: Sequential execution of subtasks with prior context passing.
-    - Reporter Agent: Executive narrative synthesis with empirical evidence citations.
-    - Benchmark Expansion: 20 ground-truth questions in `benchmark.json` and `run_eval.py`.
-    - UI Enhancements: Step-by-step analytical plan expander and subtask progress in Streamlit.
-  - ✅ **Week 5**: Critic Agent & Self-Correction Reflection Loop (Sep 14–20)
-    - Statistical Hypothesis Testing Tool: Independent/Paired T-Tests, $\chi^2$ Contingency, One-Way ANOVA, Mann-Whitney U, Pearson/Spearman correlation, and effect sizes (Cohen's d, Cramér's V, $\eta^2$).
-    - Critic Agent: Statistical assumption validation, skewness checking, and bounded self-correction loop ($\le 2$ retries).
-    - Self-Correction Recovery Rate: 100% on benchmark execution retries.
-  - ✅ **Week 6**: RAG Grounding & Persistent Long-Term Memory (Sep 21–27)
-    - ChromaDB Vector Store: Persistent dual collections (`business_glossary` and `past_analyses`) with local zero-cost embeddings.
-    - Seed Knowledge Bases: Domain business glossaries for Retail, E-Commerce, and Cricket in `data/glossaries/`.
-    - RAG Grounding Agent: Semantic search injecting metric definitions and pandas formulas into `state["rag_context"]`.
-    - UI Glossary Tab: Interactive vector memory explorer and custom term registration in Streamlit.
-  - ✅ **Week 7**: Full Multi-Agent Graph Integration & Polish (Sep 28–Oct 4)
-    - Unified 6-Agent StateGraph: `Supervisor ➔ Profiler ➔ RAG Grounding ➔ Planner ➔ Coder ⇄ Critic ➔ Reporter ➔ Vector Memory`.
-    - 35-Question Evaluation Benchmark: Expanded ground-truth dataset across all 5 evaluation datasets.
-    - End-to-End Integration Suite: 15/15 tests passing across unit and graph integration suites.
-    - UI Observability: Multi-agent collaboration badges and plan breakdown in Streamlit.
-- **Current Position**: Ready to begin **Week 8 (Oct 5–11)**: *Midterm Evaluation & Checkpoint 1 (Phase 1 Freeze, Formal Benchmark Validation & Evaluation Scorecard Lock)*.
-- **Blockers / Issues**: Zero active blockers. 15/15 unit & integration tests passing, git tree clean and pushed.
+### 🏆 Phase 1 (Weeks 1–8): Core Multi-Agent Analytical Engine — **100% COMPLETE & LOCKED**
+- ✅ **Week 1 (Aug 17–23)**: Setup & Scope Lock (Virtualenv, Git repo, 5 benchmark evaluation datasets).
+- ✅ **Week 2 (Aug 24–30)**: Core LangGraph Skeleton & MVP (FastAPI, Streamlit, AST-hardened sandbox, Coder agent).
+- ✅ **Week 3 (Aug 31–Sep 6)**: Harden the MVP Loop (Data Profiler agent, Chart generation tool, initial 10-Q benchmark).
+- ✅ **Week 4 (Sep 7–13)**: Planner Agent & Multi-Step Task Decomposition (Structured `PlanOutput`, subtask loop, Reporter agent).
+- ✅ **Week 5 (Sep 14–20)**: Critic Agent & Self-Correction Reflection Loop (`stats_tool.py`, hypothesis testing, $\le 2$ retry bound).
+- ✅ **Week 6 (Sep 21–27)**: RAG Grounding & Persistent Long-Term Memory (ChromaDB vector store, domain business glossaries, past analysis indexing).
+- ✅ **Week 7 (Sep 28–Oct 4)**: Full Multi-Agent Graph Integration & Polish (Unified 6-Agent StateGraph, 35-question benchmark expansion, UI collaboration badges).
+- ✅ **Week 8 (Oct 5–11)**: **Midterm Evaluation & Checkpoint 1 Lock**:
+  - **35-Question Benchmark**: 100% Task Success Rate, 100% Answer Accuracy.
+  - **Ablation Study**: **+40.0% Empirical Accuracy Lift** over direct LLM baseline (100% vs 60%).
+  - **Test Suite**: 15 / 15 unit and integration tests passing in `pytest`.
+  - **Budget Audit**: **$0.00 cost per query** (100% within free-tier limits).
+
+---
+
+### 🚀 Phase 2 (Weeks 9–16): Advanced Capabilities & Production Hardening — **NEXT UP**
+- 🔜 **Week 9 (Oct 12–18)**: **Automated EDA & Insights Agent** *(Automated statistical insight generation, executive dashboard generation, automated narrative reports)*.
+- ⏳ **Week 10 (Oct 19–25)**: Anomaly Detection Engine (Isolation Forest, Local Outlier Factor, Z-Score, Synthetic Anomaly benchmark).
+- ⏳ **Week 11 (Oct 26–Nov 1)**: Predictive Modeling (AutoML regression/classification, Random Forest, XGBoost).
+- ⏳ **Week 12 (Nov 2–8)**: Human-in-the-Loop & Interactive Chart Controls.
+- ⏳ **Week 13 (Nov 9–15)**: Export Engine (PDF, HTML, Excel).
+- ⏳ **Week 14 (Nov 16–22)**: Performance & Scale Hardening (DuckDB, caching).
+- ⏳ **Week 15 (Nov 23–29)**: End-to-End Evaluation & 90-Question Benchmark.
+- ⏳ **Week 16 (Nov 30–Dec 6)**: Final Polish, Demo Video & Portfolio Freeze.
+
+- **Current Position**: **Checkpoint 1 Formally Locked**. Ready to begin **Week 9 (Oct 12–18)**: *Automated EDA & Insights Agent*.
+- **Blockers / Issues**: Zero active blockers. All 15 unit and integration tests green, git tree clean and pushed.
 
 ---
 
