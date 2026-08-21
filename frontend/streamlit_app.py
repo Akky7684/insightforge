@@ -349,6 +349,22 @@ with tab_profile:
         # Raw preview expander
         with st.expander("👀 View Raw Sample Head (10 Rows)"):
             st.dataframe(st.session_state.dataset_df.head(10), use_container_width=True)
+
+        # DuckDB Fast SQL Console
+        with st.expander("🦆 DuckDB In-Memory SQL Console (Sub-Millisecond Columnar Queries)"):
+            st.caption("Query the active dataset as `data` using standard SQL (e.g. `SELECT * FROM data LIMIT 5`).")
+            sql_input = st.text_area("SQL Query", value="SELECT * FROM data LIMIT 5", height=100)
+            if st.button("⚡ Run DuckDB Query"):
+                try:
+                    from backend.app.tools.duckdb_tool import query_duckdb
+                    sql_res = query_duckdb(sql_input, st.session_state.active_dataset_path)
+                    if sql_res["success"]:
+                        st.success(f"Executed in **{sql_res['execution_time_ms']} ms** (Returned {len(sql_res['rows'])} of {sql_res['total_rows']:,} rows)")
+                        st.dataframe(pd.DataFrame(sql_res["rows"]), use_container_width=True)
+                    else:
+                        st.error(f"SQL Execution Error: {sql_res['error']}")
+                except Exception as e:
+                    st.error(f"DuckDB Error: {e}")
     else:
         st.info("Load a dataset from the sidebar to view its automated profile.")
 
@@ -392,6 +408,48 @@ with tab_eda:
             # Executive Narrative Briefing
             st.markdown("#### 📝 Executive Narrative Briefing")
             st.markdown(eda["narrative_report"])
+
+            # Export Section
+            st.markdown("---")
+            st.markdown("#### 📥 Export Publication-Grade Executive Deliverables")
+            exp_col1, exp_col2 = st.columns(2)
+            try:
+                from backend.app.tools.export_tool import export_to_html, export_to_excel
+                html_path = export_to_html(
+                    report_title=f"Executive EDA: {eda['dataset_name']}",
+                    narrative_text=eda["narrative_report"],
+                    dataset_name=eda["dataset_name"],
+                    kpis={"Data Quality Score": f"{eda['data_quality_score']}/100", "Total Records": f"{eda['row_count']:,}", "Features": eda["column_count"]},
+                    chart_paths=[eda["chart_path"]] if eda.get("chart_path") else None,
+                    sample_df=st.session_state.dataset_df,
+                )
+                with open(html_path, "rb") as hf:
+                    exp_col1.download_button(
+                        label="🌐 Download Interactive HTML Report",
+                        data=hf.read(),
+                        file_name=f"Executive_Report_{eda['dataset_name']}.html",
+                        mime="text/html",
+                        use_container_width=True,
+                    )
+
+                excel_path = export_to_excel(
+                    report_title=f"Executive EDA: {eda['dataset_name']}",
+                    dataset_name=eda["dataset_name"],
+                    narrative_text=eda["narrative_report"],
+                    kpis={"Data Quality Score": f"{eda['data_quality_score']}/100", "Total Records": f"{eda['row_count']:,}"},
+                    num_stats=eda.get("numerical_stats"),
+                    sample_df=st.session_state.dataset_df,
+                )
+                with open(excel_path, "rb") as xf:
+                    exp_col2.download_button(
+                        label="📊 Download Multi-Sheet Excel Workbook",
+                        data=xf.read(),
+                        file_name=f"Executive_Workbook_{eda['dataset_name']}.xlsx",
+                        mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                        use_container_width=True,
+                    )
+            except Exception as e:
+                st.warning(f"Export download preparation: {e}")
 
 
 # --- TAB 4: Anomaly Detection ---

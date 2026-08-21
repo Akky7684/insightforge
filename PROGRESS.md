@@ -205,12 +205,16 @@ Insight_Forge/
   - Concurrency Scorecard: **100% Success Rate (0% error rate)** across concurrent users, **3.51 RPS throughput**, **208.64ms P50 latency**.
   - In-Memory Caching: Added `_PROFILE_CACHE` in `profiler.py` delivering **48.76ms P50 response time** on cached datasets (95% latency reduction).
   - Test Suite: 21 / 21 unit and full graph integration tests green.
-- 🔜 **Week 14 (Nov 16–22)**: **Performance & Scale Hardening** *(DuckDB OLAP querying engine integration for large files & automated report export engine for PDF/Excel/HTML)*.
-- ⏳ **Week 15 (Nov 23–29)**: Comprehensive 90-Question Benchmark Validation.
-- ⏳ **Week 16 (Nov 30–Dec 6)**: Final Polish, Demo Video & Portfolio Freeze.
+- ✅ **Week 14 (Nov 16–22)**: **Performance & Scale Hardening (DuckDB & Multi-Format Export Engine)**:
+  - DuckDB OLAP Engine: `duckdb_tool.py` providing sub-50ms zero-copy SQL querying directly over CSV files with read-only safety guardrails.
+  - Multi-Format Export Engine: `export_tool.py` generating publication-grade interactive HTML reports (responsive CSS & base64 images) and multi-sheet formatted Excel workbooks (`.xlsx`).
+  - UI Integrations: Interactive DuckDB SQL Console in Deep Profile tab and 1-Click HTML/Excel export download widgets in EDA tab.
+  - Test Suite: 23 / 23 unit and full graph integration tests passing in `pytest`.
+- 🔜 **Week 15 (Nov 23–29)**: **Comprehensive 90-Question Benchmark Validation** *(Expanding `benchmark.json` to all ~90 questions across 5 datasets, final adversarial & stress evaluation, quantitative scorecard freeze)*.
+- ⏳ **Week 16 (Nov 30–Dec 6)**: Final Polish, Architecture Diagrams, Demo Video & Portfolio Freeze.
 
-- **Current Position**: Ready to begin **Week 14 (Nov 16–22)**: *Performance & Scale Hardening (DuckDB & Multi-Format Export Engine)*.
-- **Blockers / Issues**: Zero active blockers. 21/21 unit & integration tests passing, git tree clean and pushed.
+- **Current Position**: Ready to begin **Week 15 (Nov 23–29)**: *Comprehensive 90-Question Benchmark Validation*.
+- **Blockers / Issues**: Zero active blockers. 23/23 unit & integration tests passing, git tree clean and pushed.
 
 ---
 

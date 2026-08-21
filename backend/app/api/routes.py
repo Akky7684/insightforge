@@ -195,3 +195,37 @@ async def train_predictive_endpoint(dataset_path: str, target_column: str, model
         return pred_results
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Predictive training error: {e}")
+
+
+@router.post("/sql/query")
+async def execute_sql_query(sql_query: str, dataset_path: str):
+    """Execute zero-copy read-only SQL query over a dataset using embedded DuckDB OLAP engine."""
+    if not os.path.exists(dataset_path):
+        raise HTTPException(status_code=404, detail=f"Dataset file not found at: {dataset_path}")
+
+    try:
+        from backend.app.tools.duckdb_tool import query_duckdb
+        result = query_duckdb(sql_query=sql_query, dataset_path=dataset_path)
+        return result
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"DuckDB SQL error: {e}")
+
+
+@router.post("/export/html")
+async def export_html_endpoint(report_title: str, dataset_path: str, narrative_text: str):
+    """Generate standalone interactive HTML executive report."""
+    if not os.path.exists(dataset_path):
+        raise HTTPException(status_code=404, detail=f"Dataset file not found at: {dataset_path}")
+
+    try:
+        from backend.app.tools.export_tool import export_to_html
+        df = pd.read_csv(dataset_path, encoding="latin1", nrows=50)
+        export_path = export_to_html(
+            report_title=report_title,
+            narrative_text=narrative_text,
+            dataset_name=Path(dataset_path).name,
+            sample_df=df,
+        )
+        return {"success": True, "export_path": export_path}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"HTML export error: {e}")

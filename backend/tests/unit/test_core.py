@@ -268,3 +268,52 @@ def test_audit_logging_database():
     assert len(logs) > 0
     assert logs[0]["session_id"] == "test-session-123"
     assert logs[0]["hitl_trigger_type"] == "CODE_DESTRUCTIVE"
+
+
+def test_duckdb_olap_querying():
+    """Verify DuckDB executes analytical SQL queries and enforces read-only guardrails."""
+    from backend.app.tools.duckdb_tool import query_duckdb
+
+    # Valid aggregation query
+    res = query_duckdb("SELECT Pclass, COUNT(*) as cnt, AVG(Fare) as avg_fare FROM data GROUP BY Pclass ORDER BY Pclass;", TITANIC_PATH)
+    assert res["success"] is True
+    assert len(res["rows"]) == 3
+    assert "avg_fare" in res["columns"]
+    assert res["execution_time_ms"] < 500
+
+    # Prohibited write query
+    bad_res = query_duckdb("DROP TABLE data;", TITANIC_PATH)
+    assert bad_res["success"] is False
+    assert "Security Error" in bad_res["error"]
+
+
+def test_export_engine_html_and_excel():
+    """Verify Multi-Format Export Engine generates valid HTML and Excel files."""
+    from backend.app.tools.export_tool import export_to_html, export_to_excel
+
+    df = pd.read_csv(TITANIC_PATH, encoding="latin1")
+
+    # 1. HTML Report
+    html_path = export_to_html(
+        report_title="Test Titanic Report",
+        narrative_text="This is a verified test executive narrative.",
+        dataset_name="titanic.csv",
+        kpis={"Total Passengers": 891, "Survival Rate": "38.38%"},
+        sample_df=df,
+    )
+    assert Path(html_path).exists()
+    with open(html_path, "r", encoding="utf-8") as f:
+        content = f.read()
+    assert "Test Titanic Report" in content
+    assert "Total Passengers" in content
+
+    # 2. Excel Workbook
+    excel_path = export_to_excel(
+        report_title="Test Titanic Workbook",
+        dataset_name="titanic.csv",
+        narrative_text="Excel summary narrative.",
+        kpis={"Total Rows": 891},
+        sample_df=df,
+    )
+    assert Path(excel_path).exists()
+    assert Path(excel_path).stat().st_size > 1000
