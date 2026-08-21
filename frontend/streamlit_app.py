@@ -244,11 +244,12 @@ if st.session_state.dataset_df is None:
         load_dataset(str(default_titanic), "titanic.csv")
         st.rerun()
 
-tab_chat, tab_profile, tab_eda, tab_anomaly, tab_glossary = st.tabs([
+tab_chat, tab_profile, tab_eda, tab_anomaly, tab_predictive, tab_glossary = st.tabs([
     "💬 Conversational Analyst",
     "📊 Dataset Deep Profile",
     "📑 Automated EDA & Insights",
     "🚨 Anomaly Detection",
+    "🔮 Predictive Modeling",
     "📚 Business Glossary & RAG"
 ])
 
@@ -446,7 +447,75 @@ with tab_anomaly:
                 st.dataframe(pd.DataFrame(ar["anomalous_rows"]), use_container_width=True)
 
 
-# --- TAB 4: Business Glossary & RAG Knowledge Base ---
+# --- TAB 5: Predictive Modeling ---
+with tab_predictive:
+    st.markdown("### 🔮 Auto-ML Predictive Modeling & Feature Importance")
+    st.markdown("Train ensemble machine learning models (Random Forest, Gradient Boosting) to predict any target column.")
+
+    if not st.session_state.active_dataset_path or st.session_state.dataset_df is None:
+        st.info("Please load a dataset from the sidebar first.")
+    else:
+        df_cols = st.session_state.dataset_df.columns.tolist()
+        # Default selection to Survived, Sales, Profit or last column
+        default_idx = 0
+        for candidate in ["Survived", "Sales", "Profit", "total_amount"]:
+            if candidate in df_cols:
+                default_idx = df_cols.index(candidate)
+                break
+
+        col_p1, col_p2 = st.columns(2)
+        target_col = col_p1.selectbox("🎯 Select Target Variable to Predict", df_cols, index=default_idx)
+        model_type = col_p2.selectbox("🤖 Model Architecture", [
+            ("random_forest", "Random Forest (Ensemble)"),
+            ("gradient_boosting", "Gradient Boosting (Sequential)")
+        ], format_func=lambda x: x[1])[0]
+
+        if st.button("🧠 Train Predictive Model", type="primary", use_container_width=True):
+            with st.spinner(f"Training Auto-ML model to predict '{target_col}'..."):
+                try:
+                    from backend.app.graph.agents.predictive_agent import generate_predictive_report
+                    st.session_state.predictive_report = generate_predictive_report(
+                        st.session_state.active_dataset_path,
+                        target_column=target_col,
+                        model_type=model_type
+                    )
+                except Exception as e:
+                    st.error(f"Predictive modeling error: {e}")
+
+        if "predictive_report" in st.session_state and st.session_state.predictive_report:
+            pr = st.session_state.predictive_report
+            st.markdown("---")
+
+            # Metrics KPI Row
+            st.markdown(f"#### 📊 Model Evaluation: `{pr['model_name']}` ({pr['task_type'].upper()})")
+            kpi_cols = st.columns(4)
+            kpi_cols[0].metric("Target Variable", pr["target_column"])
+            kpi_cols[1].metric("Train / Test Split", f"{pr['train_samples']} / {pr['test_samples']}")
+
+            if pr["task_type"] == "classification":
+                kpi_cols[2].metric("Accuracy Score", f"{pr['metrics']['accuracy_pct']}%")
+                kpi_cols[3].metric("Weighted F1-Score", f"{pr['metrics']['f1_score']}")
+            else:
+                kpi_cols[2].metric("R² Variance Explained", f"{pr['metrics']['r2_score']:.3f}")
+                kpi_cols[3].metric("Root Mean Sq. Error (RMSE)", f"{pr['metrics']['rmse']:,}")
+
+            # Feature Importance Visual
+            if pr.get("chart_path") and os.path.exists(pr["chart_path"]):
+                st.markdown("#### 🏆 Key Driving Factors (Feature Importance)")
+                st.image(pr["chart_path"], use_container_width=True)
+
+            # Executive Briefing
+            st.markdown("#### 📝 Executive Model Briefing & Recommendations")
+            st.markdown(pr["narrative_report"])
+
+            # Sample Predictions Preview
+            if pr.get("sample_predictions"):
+                st.markdown("#### 🔬 Sample Test Predictions (Actual vs Predicted)")
+                sample_df = pd.DataFrame(pr["sample_predictions"])
+                st.dataframe(sample_df, use_container_width=True, hide_index=True)
+
+
+# --- TAB 6: Business Glossary & RAG Knowledge Base ---
 with tab_glossary:
     st.markdown("### 📚 Domain Business Glossary & RAG Vector Memory")
     st.markdown("ChromaDB semantic index grounding business formulas (e.g. AOV, Profit Margin, Strike Rate).")

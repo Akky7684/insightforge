@@ -21,11 +21,12 @@ from backend.app.graph.agents.profiler import profiler_node
 from backend.app.graph.agents.rag_agent import rag_node
 from backend.app.graph.agents.reporter import reporter_node
 from backend.app.graph.agents.anomaly_agent import anomaly_node
+from backend.app.graph.agents.predictive_agent import predictive_node
 from backend.app.graph.state import InsightForgeState
 
 
 def supervisor_node(state: dict) -> Command:
-    """Route user turn through Profiler, Anomaly, or RAG Grounding."""
+    """Route user turn through Profiler, Anomaly, Predictive, or RAG Grounding."""
     messages = state.get("messages", [])
 
     if not messages:
@@ -41,10 +42,15 @@ def supervisor_node(state: dict) -> Command:
             goto=END,
         )
 
-    # Keyword routing for anomaly detection
     last_msg = messages[-1].content.lower()
+
+    # Keyword routing for anomaly detection
     if any(kw in last_msg for kw in ["anomaly", "anomalies", "outlier", "fraud"]):
         return Command(goto="anomaly")
+
+    # Keyword routing for predictive modeling
+    if any(kw in last_msg for kw in ["predict", "forecast", "train model", "machine learning", "feature importance"]):
+        return Command(goto="predictive")
 
     # If dataset has not been profiled yet, route to Profiler first
     if not state.get("dataset_profile"):
@@ -62,6 +68,7 @@ def build_graph() -> StateGraph:
     graph.add_node("supervisor", supervisor_node)
     graph.add_node("profiler", profiler_node)
     graph.add_node("anomaly", anomaly_node)
+    graph.add_node("predictive", predictive_node)
     graph.add_node("rag", rag_node)
     graph.add_node("planner", planner_node)
     graph.add_node("coder", coder_node)

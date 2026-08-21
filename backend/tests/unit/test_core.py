@@ -183,8 +183,27 @@ def test_anomaly_agent_narrative():
     assert len(res["narrative_report"]) > 50
 
 
-def test_fastapi_endpoints_including_eda():
-    """Verify FastAPI /health, /api/profile, and /api/eda/generate endpoints."""
+def test_predictive_tool_classification():
+    """Verify Auto-ML predictive engine trains classification models and ranks feature importance."""
+    from backend.app.tools.predictive_tool import train_predictive_model
+    res = train_predictive_model(TITANIC_PATH, target_column="Survived")
+    assert res["task_type"] == "classification"
+    assert res["metrics"]["accuracy_pct"] >= 70.0
+    assert len(res["top_features"]) > 0
+    assert Path(res["chart_path"]).exists()
+
+
+def test_predictive_agent_synthesis():
+    """Verify Predictive Agent synthesizes executive briefing for model."""
+    from backend.app.graph.agents.predictive_agent import generate_predictive_report
+    res = generate_predictive_report(TITANIC_PATH, target_column="Survived")
+    assert "narrative_report" in res
+    assert len(res["narrative_report"]) > 50
+    assert Path(res["chart_path"]).exists()
+
+
+def test_fastapi_endpoints_including_eda_and_predictive():
+    """Verify FastAPI /health, /api/profile, /api/eda/generate, and /api/predictive/train endpoints."""
     client = TestClient(app)
     health = client.get("/health")
     assert health.status_code == 200
@@ -195,3 +214,9 @@ def test_fastapi_endpoints_including_eda():
     data = eda_res.json()
     assert data["row_count"] == 891
     assert len(data["ranked_insights"]) >= 3
+
+    pred_res = client.post(f"/api/predictive/train?dataset_path={TITANIC_PATH}&target_column=Survived")
+    assert pred_res.status_code == 200
+    pdata = pred_res.json()
+    assert pdata["task_type"] == "classification"
+    assert pdata["metrics"]["accuracy_pct"] >= 70.0

@@ -190,15 +190,19 @@ Insight_Forge/
   - Agent Synthesis: `anomaly_agent.py` generating plain-English investigative narrative reports for flagged rows.
   - Visualization: 2D PCA scatter plots grouping Normal vs Anomaly points.
   - Integration: Standalone `🚨 Anomaly Detection` UI tab in Streamlit and dynamic routing in `supervisor.py`.
-- 🔜 **Week 11 (Oct 26–Nov 1)**: **Predictive Modeling Engine** *(AutoML regression/classification, Random Forest, XGBoost)*.
-- ⏳ **Week 12 (Nov 2–8)**: Human-in-the-Loop & Interactive Chart Controls.
-- ⏳ **Week 13 (Nov 9–15)**: Export Engine (PDF, HTML, Excel).
-- ⏳ **Week 14 (Nov 16–22)**: Performance & Scale Hardening (DuckDB, caching).
-- ⏳ **Week 15 (Nov 23–29)**: End-to-End Evaluation & 90-Question Benchmark.
+- ✅ **Week 11 (Oct 26–Nov 1)**: **Predictive Modeling Engine**:
+  - Implementation: `predictive_tool.py` Auto-ML engine for Classification & Regression (Random Forest, Gradient Boosting).
+  - Feature Importance: Global Gini-importance ranking and publication-grade horizontal bar charts.
+  - Agent Synthesis: `predictive_agent.py` generating executive briefings with strategic recommendations.
+  - Integration: 1-Click `🔮 Predictive Modeling` tab in Streamlit and `POST /api/predictive/train` FastAPI endpoint.
+- 🔜 **Week 12 (Nov 2–8)**: **HITL Guardrails, PostgreSQL Migration & Dockerization** *(4 HITL trigger types, LangGraph interrupts, PostgreSQL checkpointer & audit table, multi-stage Dockerfile & docker-compose.yml)*.
+- ⏳ **Week 13 (Nov 9–15)**: Load Testing (Locust) & Benchmark Optimization.
+- ⏳ **Week 14 (Nov 16–22)**: Performance & Scale Hardening (DuckDB & export engines).
+- ⏳ **Week 15 (Nov 23–29)**: Comprehensive 90-Question Benchmark Validation.
 - ⏳ **Week 16 (Nov 30–Dec 6)**: Final Polish, Demo Video & Portfolio Freeze.
 
-- **Current Position**: Ready to begin **Week 11 (Oct 26–Nov 1)**: *Predictive Modeling Engine*.
-- **Blockers / Issues**: Zero active blockers. 17/17 unit & integration tests passing, git tree clean and pushed.
+- **Current Position**: Ready to begin **Week 12 (Nov 2–8)**: *HITL Guardrails, PostgreSQL Migration & Dockerization*.
+- **Blockers / Issues**: Zero active blockers. 19/19 unit & integration tests passing, git tree clean and pushed.
 
 ---
 

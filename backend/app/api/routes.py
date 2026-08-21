@@ -181,3 +181,17 @@ async def generate_eda_endpoint(dataset_path: str):
         return eda_results
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"EDA generation error: {e}")
+
+
+@router.post("/predictive/train")
+async def train_predictive_endpoint(dataset_path: str, target_column: str, model_type: str = "random_forest"):
+    """Train Auto-ML model on dataset to predict target_column and return performance & feature importance."""
+    if not os.path.exists(dataset_path):
+        raise HTTPException(status_code=404, detail=f"Dataset file not found at: {dataset_path}")
+
+    try:
+        from backend.app.graph.agents.predictive_agent import generate_predictive_report
+        pred_results = generate_predictive_report(dataset_path, target_column=target_column, model_type=model_type)
+        return pred_results
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Predictive training error: {e}")
