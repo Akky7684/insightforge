@@ -138,6 +138,28 @@ def coder_node(state: dict) -> Command:
         else:
             generated_code = "\n".join(l for l in generated_code.splitlines() if not l.strip().startswith("```"))
 
+    # Check Human-in-the-Loop (HITL) safety guardrails before execution
+    from backend.app.graph.guardrails.hitl import evaluate_hitl_triggers
+    hitl_risk = evaluate_hitl_triggers(
+        code=generated_code,
+        query=task_prompt,
+        dataset_profile=state.get("dataset_profile"),
+    )
+
+    if hitl_risk and not state.get("hitl_approved"):
+        # Pause execution and set pending HITL action
+        return {
+            "pending_hitl_action": hitl_risk,
+            "messages": [
+                AIMessage(
+                    content=f"⚠️ **Human Approval Required (HITL Trigger: `{hitl_risk['trigger']}`)**\n\n"
+                    f"**Reason:** {hitl_risk['risk_reason']}\n\n"
+                    f"```python\n{generated_code}\n```\n\n"
+                    f"*Please approve or reject this execution step.*"
+                )
+            ],
+        }
+
     # Execute in AST-hardened sandbox
     result = execute_code_in_sandbox(generated_code, dataset_path=dataset_path)
 

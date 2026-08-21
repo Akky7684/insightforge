@@ -1,0 +1,36 @@
+# ==============================================================================
+# InsightForge — Backend Multi-Agent Engine Dockerfile
+# ==============================================================================
+FROM python:3.12-slim
+
+# Set environment variables
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    DEBIAN_FRONTEND=noninteractive
+
+WORKDIR /app
+
+# Install system dependencies for scipy, scikit-learn, and matplotlib
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    curl \
+    libgomp1 \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy requirements and install
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy application codebase
+COPY backend/ ./backend/
+COPY data/ ./data/
+COPY pytest.ini .
+
+# Create output directories
+RUN mkdir -p outputs/charts chroma_data
+
+# Expose FastAPI port
+EXPOSE 8000
+
+# Run FastAPI with Uvicorn
+CMD ["uvicorn", "backend.app.main:app", "--host", "0.0.0.0", "--port", "8000"]

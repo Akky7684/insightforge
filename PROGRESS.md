@@ -195,14 +195,18 @@ Insight_Forge/
   - Feature Importance: Global Gini-importance ranking and publication-grade horizontal bar charts.
   - Agent Synthesis: `predictive_agent.py` generating executive briefings with strategic recommendations.
   - Integration: 1-Click `🔮 Predictive Modeling` tab in Streamlit and `POST /api/predictive/train` FastAPI endpoint.
-- 🔜 **Week 12 (Nov 2–8)**: **HITL Guardrails, PostgreSQL Migration & Dockerization** *(4 HITL trigger types, LangGraph interrupts, PostgreSQL checkpointer & audit table, multi-stage Dockerfile & docker-compose.yml)*.
-- ⏳ **Week 13 (Nov 9–15)**: Load Testing (Locust) & Benchmark Optimization.
+- ✅ **Week 12 (Nov 2–8)**: **HITL Guardrails, PostgreSQL Migration & Dockerization**:
+  - 4 HITL Safety Triggers: `CODE_DESTRUCTIVE`, `COMPUTE_INTENSIVE`, `COUNTER_INTUITIVE`, and `PII_SENSITIVE` in `hitl.py`.
+  - Database & Governance: PostgreSQL connection layer (`database.py`) with zero-config SQLite fallback, and `audit_logs` table tracking every run, approval, latency, and cost (`audit.py`).
+  - Production Docker Stack: `Dockerfile.backend`, `Dockerfile.frontend`, and `docker-compose.yml` orchestrating PostgreSQL 16, ChromaDB, FastAPI Backend, and Streamlit Frontend.
+  - UI Observability: `🛡️ Governance & Audit Logs` tab in Streamlit.
+- 🔜 **Week 13 (Nov 9–15)**: **Locust Load Testing & Performance Hardening** *(Concurrency stress testing, latency bottleneck profiling, high-throughput batching)*.
 - ⏳ **Week 14 (Nov 16–22)**: Performance & Scale Hardening (DuckDB & export engines).
 - ⏳ **Week 15 (Nov 23–29)**: Comprehensive 90-Question Benchmark Validation.
 - ⏳ **Week 16 (Nov 30–Dec 6)**: Final Polish, Demo Video & Portfolio Freeze.
 
-- **Current Position**: Ready to begin **Week 12 (Nov 2–8)**: *HITL Guardrails, PostgreSQL Migration & Dockerization*.
-- **Blockers / Issues**: Zero active blockers. 19/19 unit & integration tests passing, git tree clean and pushed.
+- **Current Position**: Ready to begin **Week 13 (Nov 9–15)**: *Locust Load Testing & Performance Hardening*.
+- **Blockers / Issues**: Zero active blockers. 21/21 unit & integration tests passing, git tree clean and pushed.
 
 ---
 

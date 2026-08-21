@@ -220,3 +220,51 @@ def test_fastapi_endpoints_including_eda_and_predictive():
     pdata = pred_res.json()
     assert pdata["task_type"] == "classification"
     assert pdata["metrics"]["accuracy_pct"] >= 70.0
+
+
+def test_hitl_guardrail_triggers():
+    """Verify HITL guardrail engine identifies all 4 risk trigger types."""
+    from backend.app.graph.guardrails.hitl import evaluate_hitl_triggers
+
+    # 1. PII Sensitive Trigger
+    pii_risk = evaluate_hitl_triggers(query="Find passenger with SSN 123-45-6789 in the data")
+    assert pii_risk is not None
+    assert pii_risk["trigger"] == "PII_SENSITIVE"
+
+    # 2. Destructive Code Trigger
+    dest_risk = evaluate_hitl_triggers(code="df.drop(columns=['Age'], inplace=True)\nos.remove('data.csv')")
+    assert dest_risk is not None
+    assert dest_risk["trigger"] == "CODE_DESTRUCTIVE"
+
+    # 3. Compute Intensive Trigger
+    comp_risk = evaluate_hitl_triggers(code="merged = df1.merge(df2, how='cross')")
+    assert comp_risk is not None
+    assert comp_risk["trigger"] == "COMPUTE_INTENSIVE"
+
+    # 4. Safe Code (No Trigger)
+    safe_res = evaluate_hitl_triggers(code="print(df['Fare'].mean())", query="What is average fare?")
+    assert safe_res is None
+
+
+def test_audit_logging_database():
+    """Verify governance database logs audit events and retrieves history."""
+    from backend.app.db.audit import log_audit_event, get_recent_audit_logs
+
+    event_id = log_audit_event(
+        session_id="test-session-123",
+        user_id="test-user",
+        user_message="Test audit message",
+        agent_response="Test agent response",
+        hitl_triggered=True,
+        hitl_trigger_type="CODE_DESTRUCTIVE",
+        hitl_risk_reason="Test reason",
+        approved=True,
+        latency_ms=150,
+        cost_usd=0.001,
+    )
+    assert event_id > 0
+
+    logs = get_recent_audit_logs(limit=5)
+    assert len(logs) > 0
+    assert logs[0]["session_id"] == "test-session-123"
+    assert logs[0]["hitl_trigger_type"] == "CODE_DESTRUCTIVE"

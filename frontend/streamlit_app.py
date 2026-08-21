@@ -244,13 +244,14 @@ if st.session_state.dataset_df is None:
         load_dataset(str(default_titanic), "titanic.csv")
         st.rerun()
 
-tab_chat, tab_profile, tab_eda, tab_anomaly, tab_predictive, tab_glossary = st.tabs([
+tab_chat, tab_profile, tab_eda, tab_anomaly, tab_predictive, tab_glossary, tab_audit = st.tabs([
     "💬 Conversational Analyst",
     "📊 Dataset Deep Profile",
     "📑 Automated EDA & Insights",
     "🚨 Anomaly Detection",
     "🔮 Predictive Modeling",
-    "📚 Business Glossary & RAG"
+    "📚 Business Glossary & RAG",
+    "🛡️ Governance & Audit Logs"
 ])
 
 # --- TAB 1: Chat Interface ---
@@ -555,4 +556,28 @@ with tab_glossary:
 
     except Exception as e:
         st.warning(f"Vector memory viewer unavailable: {e}")
+
+
+# --- TAB 7: Governance & Audit Logs ---
+with tab_audit:
+    st.markdown("### 🛡️ Governance, Safety & Audit Trail")
+    st.markdown("Immutable PostgreSQL/SQLite database tracking all agent operations, HITL approvals, latencies, and execution costs.")
+
+    try:
+        from backend.app.db.audit import get_recent_audit_logs
+
+        if st.button("🔄 Refresh Audit Logs"):
+            st.rerun()
+
+        logs = get_recent_audit_logs(limit=30)
+        if logs:
+            st.markdown(f"#### 📜 Recent Session Audit Logs ({len(logs)} Events Recorded)")
+            logs_df = pd.DataFrame(logs)
+            st.dataframe(logs_df, use_container_width=True, hide_index=True)
+        else:
+            st.info("No audit log events recorded yet. Ask a question or run an analysis to generate an audit trail.")
+
+    except Exception as e:
+        st.error(f"Error loading governance audit logs: {e}")
+
 

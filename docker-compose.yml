@@ -1,0 +1,82 @@
+# ==============================================================================
+# InsightForge — Multi-Container Production Docker Compose
+# Orchestrates: PostgreSQL (Audit & Checkpointer), ChromaDB, Backend, Frontend
+# ==============================================================================
+version: '3.8'
+
+services:
+  # 1. PostgreSQL Database Service (Checkpoints & Governance Audit Logs)
+  postgres:
+    image: postgres:16-alpine
+    container_name: insightforge_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-insightforge_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-insightforge_secret_2026}
+      POSTGRES_DB: ${POSTGRES_DB:-insightforge_db}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U insightforge_user -d insightforge_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # 2. ChromaDB Vector Memory Service (Domain Glossaries & Analysis Storage)
+  chromadb:
+    image: chromadb/chroma:latest
+    container_name: insightforge_chroma
+    restart: unless-stopped
+    ports:
+      - "8001:8000"
+    volumes:
+      - chroma_data:/chroma/chroma
+    environment:
+      - IS_PERSISTENT=TRUE
+
+  # 3. InsightForge FastAPI Multi-Agent Backend
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    container_name: insightforge_backend
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    ports:
+      - "8000:8000"
+    environment:
+      - GOOGLE_API_KEY=${GOOGLE_API_KEY}
+      - DATABASE_URL=postgresql://insightforge_user:insightforge_secret_2026@postgres:5432/insightforge_db
+      - ENVIRONMENT=production
+    volumes:
+      - ./outputs:/app/outputs
+      - ./data:/app/data
+
+  # 4. InsightForge Streamlit Frontend UI
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+    container_name: insightforge_frontend
+    restart: unless-stopped
+    depends_on:
+      - backend
+    ports:
+      - "8501:8501"
+    environment:
+      - GOOGLE_API_KEY=${GOOGLE_API_KEY}
+      - API_BASE_URL=http://backend:8000/api
+      - DATABASE_URL=postgresql://insightforge_user:insightforge_secret_2026@postgres:5432/insightforge_db
+    volumes:
+      - ./outputs:/app/outputs
+      - ./data:/app/data
+
+volumes:
+  postgres_data:
+    driver: local
+  chroma_data:
+    driver: local

@@ -90,9 +90,10 @@ def reporter_node(state: dict) -> Command:
             if f"[CHART:{cp}]" not in final_content:
                 final_content += f"\n\n[CHART:{cp}]"
 
-        # Index verified analysis into vector memory
+        # Index verified analysis into vector memory & log audit event
         try:
             from backend.app.memory.vector_memory import save_analysis
+            from backend.app.db.audit import log_audit_event
             q_text = user_msg[-1].content if hasattr(user_msg[-1], "content") else str(user_msg[-1])
             ds_name = state.get("dataset_id") or "dataset"
             code_text = "\n".join([st.result for st in plan if st.result]) if plan else ""
@@ -101,6 +102,17 @@ def reporter_node(state: dict) -> Command:
                 dataset_name=ds_name,
                 code=code_text,
                 report_summary=final_content,
+            )
+            # Log to database
+            log_audit_event(
+                session_id=state.get("session_id") or "session-default",
+                user_id=state.get("user_id") or "user-default",
+                user_message=q_text,
+                agent_response=final_content,
+                hitl_triggered=bool(state.get("pending_hitl_action")),
+                approved=True,
+                latency_ms=0,
+                cost_usd=0.0,
             )
         except Exception:
             pass
