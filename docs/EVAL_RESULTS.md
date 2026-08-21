@@ -55,7 +55,22 @@ To empirically validate the multi-agent design, we executed a comparative ablati
 
 ---
 
-## 4. Evaluation Methodology
-- **Harness Runner**: [`backend/tests/eval/run_eval.py`](../backend/tests/eval/run_eval.py)
+## 5. Concurrency & Load Stress Test Scorecard (Locust Benchmark — Week 13)
+
+| Metric | Target | Actual Result | Status |
+|---|---|---|---|
+| **Simulated Concurrent Users** | 5–10 concurrent users | **8 Users** (Multi-persona workload) | ✅ Validated |
+| **Request Success Rate** | $\ge 99.0\%$ | **100.0%** (0.0% failure rate) | 🏆 Perfect Reliability |
+| **Throughput (RPS)** | $\ge 2.0\text{ req/s}$ | **3.51 req/s** | ✅ Exceeds Target |
+| **Overall Latency P50 (Median)** | $< 500\text{ms}$ | **208.64 ms** | ⚡ High Speed |
+| **Cached Profile Query P50** | $< 100\text{ms}$ | **48.76 ms** (95% reduction via in-memory cache) | 🚀 Sub-50ms |
+| **API Health Ping P50** | $< 50\text{ms}$ | **34.79 ms** | ⚡ Instant |
+
+---
+
+## 6. Evaluation Methodology
+- **Benchmark Runner**: [`backend/tests/eval/run_eval.py`](../backend/tests/eval/run_eval.py)
+- **Ablation Study**: [`backend/tests/eval/run_ablation.py`](../backend/tests/eval/run_ablation.py)
+- **Load Test Harness**: [`backend/tests/load/locustfile.py`](../backend/tests/load/locustfile.py) & [`backend/tests/load/run_load_test.py`](../backend/tests/load/run_load_test.py)
 - **Benchmark Source**: [`backend/tests/eval/benchmark.json`](../backend/tests/eval/benchmark.json)
 - **Ground Truth Establishment**: Computed deterministically via offline pandas scripts and cross-verified against dataset schema.

@@ -11,6 +11,7 @@ Caches the structured profile in InsightForgeState['dataset_profile']
 to eliminate repetitive profiling tool calls by other agents.
 """
 
+import os
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 import numpy as np
@@ -18,9 +19,18 @@ import pandas as pd
 from langchain_core.messages import AIMessage
 from langgraph.types import Command
 
+# In-memory LRU profiling cache: (resolved_path, mtime) -> profile_dict
+_PROFILE_CACHE: Dict[tuple, Dict[str, Any]] = {}
+
 
 def profile_dataset(file_path: str) -> Dict[str, Any]:
-    """Perform comprehensive statistical and structural profiling of a CSV dataset."""
+    """Perform comprehensive statistical and structural profiling of a CSV dataset (with in-memory cache)."""
+    p = Path(file_path).resolve()
+    if p.exists():
+        cache_key = (str(p), p.stat().st_mtime)
+        if cache_key in _PROFILE_CACHE:
+            return _PROFILE_CACHE[cache_key]
+
     df = pd.read_csv(file_path, encoding="latin1")
     n_rows, n_cols = df.shape
 
@@ -124,7 +134,7 @@ def profile_dataset(file_path: str) -> Dict[str, Any]:
         corr_strs = [f"{c['feature_1']} & {c['feature_2']} (r={c['correlation']})" for c in high_correlations]
         summary_lines.append(f"High Correlations (|r| >= 0.5): {', '.join(corr_strs)}")
 
-    return {
+    result = {
         "dataset_name": Path(file_path).name,
         "row_count": n_rows,
         "column_count": n_cols,
@@ -135,6 +145,11 @@ def profile_dataset(file_path: str) -> Dict[str, Any]:
         "high_correlations": high_correlations,
         "summary_text": "\n".join(summary_lines),
     }
+
+    if p.exists():
+        _PROFILE_CACHE[(str(p), p.stat().st_mtime)] = result
+
+    return result
 
 
 def profiler_node(state: dict) -> dict:
