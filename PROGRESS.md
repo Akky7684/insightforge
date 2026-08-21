@@ -185,16 +185,20 @@ Insight_Forge/
   - Multi-Panel Visual Dashboard: Automated 4-panel executive overview charts saved in `outputs/charts/`.
   - Executive EDA Agent: Synthesizes high-impact narrative briefings with quality health, driver patterns, and strategic recommendations.
   - Streamlit & API: 1-Click Executive EDA tab in Streamlit and `POST /api/eda/generate` endpoint.
-- 🔜 **Week 10 (Oct 19–25)**: **Anomaly Detection Engine** *(Multi-method anomaly scan: Isolation Forest, Local Outlier Factor, Robust Z-Score, evaluation on Synthetic Anomaly benchmark)*.
-- ⏳ **Week 11 (Oct 26–Nov 1)**: Predictive Modeling (AutoML regression/classification, Random Forest, XGBoost).
+- ✅ **Week 10 (Oct 19–25)**: **Anomaly Detection Engine**:
+  - Implementation: `anomaly_tool.py` leveraging `scikit-learn` for Isolation Forest (multivariate), Local Outlier Factor (density), and Robust Z-Score (univariate).
+  - Agent Synthesis: `anomaly_agent.py` generating plain-English investigative narrative reports for flagged rows.
+  - Visualization: 2D PCA scatter plots grouping Normal vs Anomaly points.
+  - Integration: Standalone `🚨 Anomaly Detection` UI tab in Streamlit and dynamic routing in `supervisor.py`.
+- 🔜 **Week 11 (Oct 26–Nov 1)**: **Predictive Modeling Engine** *(AutoML regression/classification, Random Forest, XGBoost)*.
 - ⏳ **Week 12 (Nov 2–8)**: Human-in-the-Loop & Interactive Chart Controls.
 - ⏳ **Week 13 (Nov 9–15)**: Export Engine (PDF, HTML, Excel).
 - ⏳ **Week 14 (Nov 16–22)**: Performance & Scale Hardening (DuckDB, caching).
 - ⏳ **Week 15 (Nov 23–29)**: End-to-End Evaluation & 90-Question Benchmark.
 - ⏳ **Week 16 (Nov 30–Dec 6)**: Final Polish, Demo Video & Portfolio Freeze.
 
-- **Current Position**: Ready to begin **Week 10 (Oct 19–25)**: *Anomaly Detection Engine*.
-- **Blockers / Issues**: Zero active blockers. 15/15 unit & integration tests passing, git tree clean and pushed.
+- **Current Position**: Ready to begin **Week 11 (Oct 26–Nov 1)**: *Predictive Modeling Engine*.
+- **Blockers / Issues**: Zero active blockers. 17/17 unit & integration tests passing, git tree clean and pushed.
 
 ---
 

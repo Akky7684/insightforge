@@ -20,11 +20,12 @@ from backend.app.graph.agents.planner import planner_node
 from backend.app.graph.agents.profiler import profiler_node
 from backend.app.graph.agents.rag_agent import rag_node
 from backend.app.graph.agents.reporter import reporter_node
+from backend.app.graph.agents.anomaly_agent import anomaly_node
 from backend.app.graph.state import InsightForgeState
 
 
 def supervisor_node(state: dict) -> Command:
-    """Route user turn through Profiler or RAG Grounding."""
+    """Route user turn through Profiler, Anomaly, or RAG Grounding."""
     messages = state.get("messages", [])
 
     if not messages:
@@ -39,6 +40,11 @@ def supervisor_node(state: dict) -> Command:
             update={"messages": [AIMessage(content="Please upload or select a CSV dataset first!")]},
             goto=END,
         )
+
+    # Keyword routing for anomaly detection
+    last_msg = messages[-1].content.lower()
+    if any(kw in last_msg for kw in ["anomaly", "anomalies", "outlier", "fraud"]):
+        return Command(goto="anomaly")
 
     # If dataset has not been profiled yet, route to Profiler first
     if not state.get("dataset_profile"):
@@ -55,6 +61,7 @@ def build_graph() -> StateGraph:
     # Add agent nodes
     graph.add_node("supervisor", supervisor_node)
     graph.add_node("profiler", profiler_node)
+    graph.add_node("anomaly", anomaly_node)
     graph.add_node("rag", rag_node)
     graph.add_node("planner", planner_node)
     graph.add_node("coder", coder_node)
@@ -69,6 +76,8 @@ def build_graph() -> StateGraph:
     graph.add_edge("rag", "planner")
     graph.add_edge("planner", "coder")
     graph.add_edge("reporter", END)
+    # The anomaly node is a terminal path for dedicated anomaly scans
+    # graph.add_edge("anomaly", END)  (END is default when returning Command(goto=END))
 
     # Compile with memory checkpointer
     checkpointer = MemorySaver()

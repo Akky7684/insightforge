@@ -34,13 +34,12 @@ class Subtask(BaseModel):
 
 
 class InsightForgeState(TypedDict):
-    """The central state that flows through the entire LangGraph.
-
-    Every node reads from and writes to this state. LangGraph automatically
+    """Master State definition for the Multi-Agent analytical graph.
+    
+    Uses standard TypedDict (compatible with LangGraph Pydantic validation) and 
     handles state updates and checkpointing.
     """
 
-    # --- Conversation ---
     messages: Annotated[list[BaseMessage], add_messages]
     """Chat history — automatically appended via the add_messages reducer."""
 
@@ -61,17 +60,20 @@ class InsightForgeState(TypedDict):
     current_subtask_idx: int
     """Index of the subtask currently being executed."""
 
-    # --- RAG ---
+    # --- Context & Specialized Agents ---
     rag_context: Optional[str]
-    """Retrieved context from the business glossary / vector store."""
+    """Business glossary definitions injected by the RAG Grounding agent."""
 
-    # --- HITL ---
+    anomaly_results: Optional[dict]
+    """Cached anomaly detection results from the Anomaly agent."""
+
+    # --- Interaction ---
     pending_hitl_action: Optional[dict]
-    """Details of an action awaiting human approval: {action, risk_reason, payload}."""
+    """State flag indicating the workflow is paused awaiting Human-in-the-loop input."""
 
-    # --- Session ---
+    # --- Telemetry ---
     session_id: str
-    """Unique session identifier for this conversation thread."""
+    """Unique ID for tracing the current analytics session."""
 
     user_id: str
-    """User identifier for namespace isolation."""
+    """Identifier for the user."""

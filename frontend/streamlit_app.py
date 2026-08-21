@@ -244,10 +244,11 @@ if st.session_state.dataset_df is None:
         load_dataset(str(default_titanic), "titanic.csv")
         st.rerun()
 
-tab_chat, tab_profile, tab_eda, tab_glossary = st.tabs([
+tab_chat, tab_profile, tab_eda, tab_anomaly, tab_glossary = st.tabs([
     "💬 Conversational Analyst",
     "📊 Dataset Deep Profile",
     "📑 Automated EDA & Insights",
+    "🚨 Anomaly Detection",
     "📚 Business Glossary & RAG"
 ])
 
@@ -389,6 +390,60 @@ with tab_eda:
             # Executive Narrative Briefing
             st.markdown("#### 📝 Executive Narrative Briefing")
             st.markdown(eda["narrative_report"])
+
+
+# --- TAB 4: Anomaly Detection ---
+with tab_anomaly:
+    st.markdown("### 🚨 Autonomous Anomaly & Outlier Detection")
+    st.markdown("Scans dataset using machine learning to find fraudulent, extreme, or suspicious records.")
+
+    if not st.session_state.active_dataset_path:
+        st.info("Please load a dataset from the sidebar first.")
+    else:
+        col1, col2 = st.columns(2)
+        method = col1.selectbox("Detection Algorithm", [
+            ("isolation_forest", "Isolation Forest (Multivariate)"),
+            ("lof", "Local Outlier Factor (Density-based)"),
+            ("zscore", "Robust Z-Score / MAD (Univariate)")
+        ], format_func=lambda x: x[1])[0]
+        
+        contamination = col2.slider("Contamination Rate (Expected Outliers %)", min_value=1, max_value=15, value=5, step=1) / 100.0
+        
+        if st.button("🚨 Scan for Anomalies", type="primary", use_container_width=True):
+            with st.spinner(f"Running {method} scan on {st.session_state.active_dataset_name}..."):
+                try:
+                    from backend.app.graph.agents.anomaly_agent import generate_anomaly_report
+                    st.session_state.anomaly_report = generate_anomaly_report(
+                        st.session_state.active_dataset_path, 
+                        method=method, 
+                        contamination=contamination
+                    )
+                except Exception as e:
+                    st.error(f"Anomaly detection error: {e}")
+
+        if "anomaly_report" in st.session_state and st.session_state.anomaly_report:
+            ar = st.session_state.anomaly_report
+            st.markdown("---")
+            
+            # KPI Banner
+            k1, k2, k3 = st.columns(3)
+            k1.metric("Total Records", f"{ar['total_records']:,}")
+            k2.metric("Flagged Anomalies", f"{ar['total_anomalies']:,}", delta_color="inverse")
+            k3.metric("Anomaly Rate", f"{ar['anomaly_percentage']}%")
+            
+            # Narrative Explanation
+            st.markdown("#### 🧠 Agent Investigation Report")
+            st.info(ar["narrative_report"])
+            
+            # Visual Scatter Plot
+            if ar.get("chart_path") and os.path.exists(ar["chart_path"]):
+                st.markdown("#### 📊 Anomaly Distribution Plot")
+                st.image(ar["chart_path"], use_container_width=True)
+                
+            # Tabular Output
+            if ar["total_anomalies"] > 0:
+                st.markdown(f"#### ⚠️ Suspicious Records Sample (Top {len(ar['anomalous_rows'])})")
+                st.dataframe(pd.DataFrame(ar["anomalous_rows"]), use_container_width=True)
 
 
 # --- TAB 4: Business Glossary & RAG Knowledge Base ---

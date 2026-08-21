@@ -158,6 +158,31 @@ def test_automated_eda_agent_synthesis():
     assert Path(briefing["chart_path"]).exists()
 
 
+def test_anomaly_detection_engine():
+    """Verify Anomaly Detection Engine runs algorithms and returns plot."""
+    from backend.app.tools.anomaly_tool import detect_anomalies
+    
+    # Test Isolation Forest
+    res_iso = detect_anomalies(SUPERSTORE_PATH, method="isolation_forest", contamination=0.05)
+    assert res_iso["method"] == "isolation_forest"
+    assert res_iso["total_anomalies"] > 0
+    assert Path(res_iso["chart_path"]).exists()
+    
+    # Test Robust Z-Score
+    res_z = detect_anomalies(SUPERSTORE_PATH, method="zscore", contamination=0.05)
+    assert res_z["method"] == "zscore"
+    assert res_z["total_anomalies"] > 0
+    assert Path(res_z["chart_path"]).exists()
+
+
+def test_anomaly_agent_narrative():
+    """Verify Anomaly Agent synthesizes explanation for flagged rows."""
+    from backend.app.graph.agents.anomaly_agent import generate_anomaly_report
+    res = generate_anomaly_report(TITANIC_PATH, contamination=0.02)
+    assert "narrative_report" in res
+    assert len(res["narrative_report"]) > 50
+
+
 def test_fastapi_endpoints_including_eda():
     """Verify FastAPI /health, /api/profile, and /api/eda/generate endpoints."""
     client = TestClient(app)
