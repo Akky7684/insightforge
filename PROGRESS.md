@@ -179,9 +179,13 @@ Insight_Forge/
 
 ---
 
-### 🚀 Phase 2 (Weeks 9–16): Advanced Capabilities & Production Hardening — **NEXT UP**
-- 🔜 **Week 9 (Oct 12–18)**: **Automated EDA & Insights Agent** *(Automated statistical insight generation, executive dashboard generation, automated narrative reports)*.
-- ⏳ **Week 10 (Oct 19–25)**: Anomaly Detection Engine (Isolation Forest, Local Outlier Factor, Z-Score, Synthetic Anomaly benchmark).
+### 🚀 Phase 2 (Weeks 9–16): Advanced Capabilities & Production Hardening
+- ✅ **Week 9 (Oct 12–18)**: **Automated EDA & Insights Agent**:
+  - Statistical Discovery Engine: Data Quality Score (0–100%), distribution skewness, IQR outlier bounds, and correlation driver discovery.
+  - Multi-Panel Visual Dashboard: Automated 4-panel executive overview charts saved in `outputs/charts/`.
+  - Executive EDA Agent: Synthesizes high-impact narrative briefings with quality health, driver patterns, and strategic recommendations.
+  - Streamlit & API: 1-Click Executive EDA tab in Streamlit and `POST /api/eda/generate` endpoint.
+- 🔜 **Week 10 (Oct 19–25)**: **Anomaly Detection Engine** *(Multi-method anomaly scan: Isolation Forest, Local Outlier Factor, Robust Z-Score, evaluation on Synthetic Anomaly benchmark)*.
 - ⏳ **Week 11 (Oct 26–Nov 1)**: Predictive Modeling (AutoML regression/classification, Random Forest, XGBoost).
 - ⏳ **Week 12 (Nov 2–8)**: Human-in-the-Loop & Interactive Chart Controls.
 - ⏳ **Week 13 (Nov 9–15)**: Export Engine (PDF, HTML, Excel).
@@ -189,8 +193,8 @@ Insight_Forge/
 - ⏳ **Week 15 (Nov 23–29)**: End-to-End Evaluation & 90-Question Benchmark.
 - ⏳ **Week 16 (Nov 30–Dec 6)**: Final Polish, Demo Video & Portfolio Freeze.
 
-- **Current Position**: **Checkpoint 1 Formally Locked**. Ready to begin **Week 9 (Oct 12–18)**: *Automated EDA & Insights Agent*.
-- **Blockers / Issues**: Zero active blockers. All 15 unit and integration tests green, git tree clean and pushed.
+- **Current Position**: Ready to begin **Week 10 (Oct 19–25)**: *Anomaly Detection Engine*.
+- **Blockers / Issues**: Zero active blockers. 15/15 unit & integration tests passing, git tree clean and pushed.
 
 ---
 

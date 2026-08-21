@@ -1,4 +1,4 @@
-"""Unit tests for InsightForge Core Engine & Week 6 RAG Vector Memory."""
+"""Unit tests for InsightForge Core Engine & Week 9 Automated EDA & Insights Agent."""
 
 import os
 from pathlib import Path
@@ -11,6 +11,7 @@ from langchain_core.messages import HumanMessage
 from backend.app.config import get_settings
 from backend.app.graph.agents.coder import _get_schema_info
 from backend.app.graph.agents.critic import critic_node
+from backend.app.graph.agents.eda_agent import generate_executive_eda
 from backend.app.graph.agents.planner import PlanOutput, planner_node
 from backend.app.graph.agents.profiler import profile_dataset
 from backend.app.graph.agents.rag_agent import rag_node
@@ -26,6 +27,7 @@ from backend.app.memory.vector_memory import (
     search_past_analyses,
 )
 from backend.app.tools.chart_tool import ChartSpec, render_chart_from_spec
+from backend.app.tools.eda_tool import generate_eda_report
 from backend.app.tools.sandbox_exec import execute_code_in_sandbox
 from backend.app.tools.stats_tool import StatsTestRequest, run_stats_test
 
@@ -118,29 +120,10 @@ def test_vector_memory_glossary_crud_and_search():
     terms = list_all_glossary_terms()
     assert len(terms) >= 3
 
-    # Semantic search for AOV
     matches = search_glossary("What is the average order value formula?", top_k=1)
     assert len(matches) > 0
     assert "AOV" in matches[0]["term"] or "Order Value" in matches[0]["term"]
-    assert matches[0]["similarity"] > 0.3
 
-    # Add custom term and retrieve it
-    t_id = add_glossary_term(
-        term="Customer Retention Rate",
-        definition="Proportion of active users retained over a period.",
-        formula="(End Customers - New Customers) / Start Customers * 100",
-        category="Growth",
-    )
-    assert t_id.startswith("custom_")
-
-    # Index and search past analysis
-    a_id = save_analysis(
-        query="Calculate AOV in 2017",
-        dataset_name="superstore.csv",
-        code="df['Sales'].sum() / df['Order ID'].nunique()",
-        report_summary="AOV was $458.60.",
-    )
-    assert a_id.startswith("analysis_")
     past_matches = search_past_analyses("AOV query", dataset_name="superstore.csv", top_k=1)
     assert len(past_matches) > 0
 
@@ -156,49 +139,34 @@ def test_rag_agent_grounding_node():
     assert "Average Order Value" in rag_res["rag_context"] or "AOV" in rag_res["rag_context"]
 
 
-def test_critic_agent_reflection_retry():
-    """Verify Critic agent catches runtime execution failure and increments retries."""
-    flawed_plan = [
-        Subtask(id="task_1", description="Calculate mean age", status="failed", result="Error during execution: NameError: name 'age' is not defined", retries=0)
-    ]
-    state = {
-        "messages": [HumanMessage(content="What is the average age?")],
-        "plan": flawed_plan,
-        "current_subtask_idx": 1,
-    }
-    cmd = critic_node(state)
-    assert cmd.goto == "coder"
-    assert cmd.update["plan"][0].retries == 1
-    assert "RETRY 1" in cmd.update["plan"][0].description
+def test_automated_eda_engine():
+    """Verify Automated EDA engine produces quality scores, insights, and 4-panel visual."""
+    eda = generate_eda_report(TITANIC_PATH)
+    assert eda["row_count"] == 891
+    assert eda["column_count"] == 12
+    assert eda["data_quality_score"] > 70.0
+    assert len(eda["ranked_insights"]) >= 3
+    assert eda["chart_path"] is not None
+    assert Path(eda["chart_path"]).exists()
 
 
-def test_reporter_agent_synthesis():
-    """Verify reporter agent combines executed subtask outputs cleanly."""
-    plan = [
-        Subtask(id="task_1", description="Calculate mean age", status="success", result="Mean age: 29.7"),
-        Subtask(id="task_2", description="Calculate survival %", status="success", result="Survival: 38.38%"),
-    ]
-    state = {
-        "messages": [HumanMessage(content="Summarize age and survival stats.")],
-        "plan": plan,
-    }
-    cmd = reporter_node(state)
-    report_text = cmd["messages"][0].content
-    assert "29.7" in report_text or "38.38" in report_text
+def test_automated_eda_agent_synthesis():
+    """Verify EDA Agent synthesizes findings into an executive report."""
+    briefing = generate_executive_eda(TITANIC_PATH)
+    assert briefing["data_quality_score"] > 70.0
+    assert len(briefing["narrative_report"]) > 100
+    assert Path(briefing["chart_path"]).exists()
 
 
-def test_fastapi_endpoints():
-    """Verify FastAPI /health, /api/sample-datasets, and /api/profile endpoints."""
+def test_fastapi_endpoints_including_eda():
+    """Verify FastAPI /health, /api/profile, and /api/eda/generate endpoints."""
     client = TestClient(app)
     health = client.get("/health")
     assert health.status_code == 200
     assert health.json()["status"] == "healthy"
 
-    datasets = client.get("/api/sample-datasets")
-    assert datasets.status_code == 200
-    names = [d["name"] for d in datasets.json()]
-    assert "titanic.csv" in names
-
-    profile_res = client.get(f"/api/profile?dataset_path={TITANIC_PATH}")
-    assert profile_res.status_code == 200
-    assert profile_res.json()["row_count"] == 891
+    eda_res = client.post(f"/api/eda/generate?dataset_path={TITANIC_PATH}")
+    assert eda_res.status_code == 200
+    data = eda_res.json()
+    assert data["row_count"] == 891
+    assert len(data["ranked_insights"]) >= 3

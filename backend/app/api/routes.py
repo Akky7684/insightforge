@@ -167,3 +167,17 @@ async def get_dataset_profile(dataset_path: str):
         return profile
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Profiling error: {e}")
+
+
+@router.post("/eda/generate")
+async def generate_eda_endpoint(dataset_path: str):
+    """Generate comprehensive automated EDA scan, 4-panel visual dashboard, and executive narrative report."""
+    if not os.path.exists(dataset_path):
+        raise HTTPException(status_code=404, detail=f"Dataset file not found at: {dataset_path}")
+
+    try:
+        from backend.app.graph.agents.eda_agent import generate_executive_eda
+        eda_results = generate_executive_eda(dataset_path)
+        return eda_results
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"EDA generation error: {e}")

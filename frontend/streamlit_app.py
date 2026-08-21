@@ -235,7 +235,12 @@ if st.session_state.dataset_df is None:
         load_dataset(str(default_titanic), "titanic.csv")
         st.rerun()
 
-tab_chat, tab_profile, tab_glossary = st.tabs(["💬 Conversational Analyst", "📊 Dataset Deep Profile", "📚 Business Glossary & RAG"])
+tab_chat, tab_profile, tab_eda, tab_glossary = st.tabs([
+    "💬 Conversational Analyst",
+    "📊 Dataset Deep Profile",
+    "📑 Automated EDA & Insights",
+    "📚 Business Glossary & RAG"
+])
 
 # --- TAB 1: Chat Interface ---
 with tab_chat:
@@ -336,7 +341,48 @@ with tab_profile:
         st.info("Load a dataset from the sidebar to view its automated profile.")
 
 
-# --- TAB 3: Business Glossary & RAG Knowledge Base ---
+# --- TAB 3: Automated EDA & Executive Report ---
+with tab_eda:
+    st.markdown("### 📑 1-Click Executive EDA & Statistical Briefing")
+    st.markdown("Autonomous multi-panel discovery scanning data health, key drivers, skewness, and generating visual dashboards.")
+
+    if not st.session_state.active_dataset_path:
+        st.info("Please load a dataset from the sidebar first.")
+    else:
+        if st.button("⚡ Generate Comprehensive Executive EDA Report", type="primary", use_container_width=True):
+            with st.spinner("🤖 Autonomous EDA Engine discovering statistical patterns & rendering multi-panel charts..."):
+                try:
+                    from backend.app.graph.agents.eda_agent import generate_executive_eda
+                    st.session_state.eda_report = generate_executive_eda(st.session_state.active_dataset_path)
+                except Exception as e:
+                    st.error(f"Error generating EDA report: {e}")
+
+        if "eda_report" in st.session_state and st.session_state.eda_report:
+            eda = st.session_state.eda_report
+            st.markdown("---")
+
+            # Quality Score Banner
+            score_col1, score_col2, score_col3 = st.columns([1, 1, 2])
+            score_col1.metric("🛡️ Data Quality Score", f"{eda['data_quality_score']} / 100")
+            score_col2.metric("📊 Records Analyzed", f"{eda['row_count']:,}")
+            score_col3.metric("📐 Feature Space", f"{eda['column_count']} Columns")
+
+            # Key Insights Cards
+            st.markdown("#### 🔍 Prioritized Statistical Discoveries")
+            for ins in eda["ranked_insights"]:
+                st.info(ins)
+
+            # 4-Panel Visual Dashboard
+            if eda.get("chart_path") and os.path.exists(eda["chart_path"]):
+                st.markdown("#### 🖼️ Multi-Panel Executive Visual Dashboard")
+                st.image(eda["chart_path"], caption="Consolidated 4-Panel Statistical Overview", use_container_width=True)
+
+            # Executive Narrative Briefing
+            st.markdown("#### 📝 Executive Narrative Briefing")
+            st.markdown(eda["narrative_report"])
+
+
+# --- TAB 4: Business Glossary & RAG Knowledge Base ---
 with tab_glossary:
     st.markdown("### 📚 Domain Business Glossary & RAG Vector Memory")
     st.markdown("ChromaDB semantic index grounding business formulas (e.g. AOV, Profit Margin, Strike Rate).")
