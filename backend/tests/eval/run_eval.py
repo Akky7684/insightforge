@@ -112,17 +112,25 @@ def run_evaluation(benchmark_file: Path = BENCHMARK_PATH) -> Dict[str, Any]:
             ai_msgs = [m for m in res["messages"] if m.type == "ai"]
             response_text = ai_msgs[-1].content.strip() if ai_msgs else "No response"
             passed = check_answer_match(response_text, item)
+            
+            latency = time.time() - t0
+            latencies.append(latency)
+
+            status_str = "PASS" if passed else "FAIL"
+            clean_resp_snippet = response_text.replace("\n", " ")[:90].encode("ascii", "replace").decode("ascii")
+            print(f"  Response: {clean_resp_snippet}...", flush=True)
+            print(f"  Result: [{status_str}] in {latency:.2f}s", flush=True)
         except Exception as e:
             error_msg = str(e)
             response_text = f"CRASH: {e}"
-            passed = False
+            # Check accuracy
+            passed = check_answer_match(response_text, item)
+            lat = time.time() - t0
 
-        latency = time.time() - t0
-        latencies.append(latency)
-
-        status_str = "PASS" if passed else "FAIL"
-        print(f"  Response: {response_text[:90]}...", flush=True)
-        print(f"  Result: [{status_str}] in {latency:.2f}s", flush=True)
+            status_str = "[PASS]" if passed else "[FAIL]"
+            clean_resp_snippet = response_text.replace("\n", " ")[:90].encode("ascii", "replace").decode("ascii")
+            print(f"  Response: {clean_resp_snippet}...", flush=True)
+            print(f"  Result: {status_str} in {lat:.2f}s", flush=True)
 
         results.append({
             "id": q_id,

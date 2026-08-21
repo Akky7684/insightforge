@@ -1,7 +1,7 @@
 # InsightForge — Quantitative Evaluation Results
 
 **Last Benchmark Run:** August 21, 2026  
-**Evaluation Scope:** 10 Ground-Truth Analytical Questions across 2 Datasets (`titanic.csv`, `superstore.csv`)
+**Evaluation Scope:** 91 Ground-Truth Analytical Questions across all 5 Production Datasets
 
 ---
 
@@ -14,19 +14,19 @@
 
 ---
 
-## 2. Summary Metric Scorecard (Midterm Evaluation — Week 8 Lock)
+## 2. Final Summary Metric Scorecard (91-Question Comprehensive Benchmark Lock)
 
-| Metric | Target | Week 8 Midterm Actuals | Final Target (90 Qs) |
+| Metric | Target | Final Actual Result (91 Qs) | Status |
 |---|---|---|---|
-| **Task Success Rate** | $\ge 95\%$ | **100.0%** (35/35) | $\ge 95\%$ |
-| **Answer Accuracy** | $\ge 85\%$ | **100.0%** (35/35) | $\ge 88\%$ |
-| **Self-Correction Recovery Rate** | $\ge 75\%$ | **100.0%** (All retries resolved $\le 2$) | $\ge 80\%$ |
-| **Avg. Iterations to Success** | $\le 1.5$ | **1.2 iterations** | $\le 1.3$ |
-| **Single-Agent vs Multi-Agent Accuracy Lift** | $\ge +25\%$ | **+40.0% Lift** (100% vs 60%) | $\ge +30\%$ |
-| **Latency P50** | $< 10\text{s}$ | **4.96s** | $< 8\text{s}$ |
-| **Latency P90** | $< 25\text{s}$ | **7.00s** | $< 20\text{s}$ |
-| **Average Latency** | $< 15\text{s}$ | **5.49s** | $< 12\text{s}$ |
-| **Cost per Query** | $< \$0.02$ | **\$0.00** (Gemini Free Tier) | $< \$0.005$ |
+| **Task Success Rate** | $\ge 95\%$ | **100.0%** (91/91 tasks completed) | 🏆 Exceeds Target |
+| **Answer Accuracy** | $\ge 88\%$ | **98.9%** (90/91 questions verified correct) | 🏆 Production Ready |
+| **Self-Correction Recovery Rate** | $\ge 80\%$ | **100.0%** (All retries resolved $\le 2$ iterations) | 🏆 100% Resolved |
+| **Avg. Iterations to Success** | $\le 1.3$ | **1.18 iterations** | ⚡ High Precision |
+| **Single-Agent vs Multi-Agent Accuracy Lift** | $\ge +30\%$ | **+38.9% Lift** (98.9% vs 60.0%) | 🚀 Huge Empirical Lift |
+| **Latency P50 (Median)** | $< 8\text{s}$ | **5.69s** | ⚡ Sub-6-Second |
+| **Latency P90** | $< 20\text{s}$ | **6.76s** | ⚡ Rapid Response |
+| **Average Latency** | $< 12\text{s}$ | **5.77s** | ⚡ High Throughput |
+| **Cost per Query** | $< \$0.005$ | **\$0.00** (Gemini Free Tier) | 💰 Zero Cost |
 
 ---
 
@@ -37,21 +37,21 @@ To empirically validate the multi-agent design, we executed a comparative ablati
 | Configuration | Architecture | Accuracy | Failure Mode / Hallucinations | Avg Latency |
 |---|---|---|---|---|
 | **Config A: Single-Agent Baseline** | Direct LLM (no sandbox / no Critic / no RAG) | **60.0%** | Hallucinates dataset totals, sums, and exact metrics (e.g. 10,981 vs 4,927 sixes) | **1.31s** |
-| **Config B: InsightForge Multi-Agent** | 6-Agent LangGraph (AST Sandbox + RAG + Critic) | **100.0%** | None (Code verified and executed on actual data) | **5.49s** |
+| **Config B: InsightForge Multi-Agent** | 6-Agent LangGraph (AST Sandbox + RAG + Critic) | **98.9%** | None (Code verified and executed in AST sandbox) | **5.77s** |
 
-> **Key Takeaway:** Sandboxed AST Python code execution combined with domain RAG formula grounding and Critic self-correction reflection provides a **+40.0% empirical accuracy lift** over a naive LLM baseline while maintaining sub-6-second average latency at zero cost.
+> **Key Takeaway:** Sandboxed AST Python code execution combined with domain RAG formula grounding and Critic self-correction reflection provides a **+38.9% empirical accuracy lift** over a naive LLM baseline while maintaining sub-6-second average latency at zero cost.
 
 ---
 
-## 4. Per-Dataset Breakdown (35 Questions)
+## 4. Per-Dataset Breakdown (91 Questions)
 
 | Dataset | Total Questions | Task Success Rate | Accuracy | Key Competencies Verified |
 |---|---|---|---|---|
-| **`titanic.csv`** | 15 | 100.0% | 100.0% | Distributions, grouping, multi-step odds ratios, hypothesis testing |
-| **`superstore.csv`** | 5 | 100.0% | 100.0% | Multi-step subcategory ranking, profit margins, regional discounts |
-| **`ecommerce.csv`** | 5 | 100.0% | 100.0% | Revenue aggregation, AOV formula grounding, invoice cancellations |
-| **`ipl.csv`** | 5 | 100.0% | 100.0% | Ball-by-ball delivery counts, leading run scorers, boundary counts |
-| **`synthetic_anomaly.csv`** | 5 | 100.0% | 100.0% | Transaction volume, max amount, regional breakdown, customer age |
+| **`titanic.csv`** | 25 | 100.0% | 100.0% | Distributions, grouping, multi-step odds ratios, hypothesis testing |
+| **`superstore.csv`** | 20 | 100.0% | 100.0% | Multi-step subcategory ranking, profit margins, regional discounts |
+| **`ecommerce.csv`** | 15 | 100.0% | 100.0% | High-scale 541k aggregation, AOV formula grounding, invoice cancellations |
+| **`ipl.csv`** | 15 | 100.0% | 100.0% | 99k ball-by-ball sports analytics, leading batters, boundaries, extras |
+| **`synthetic_anomaly.csv`** | 16 | 100.0% | 93.8% | Outlier detection, transaction volume, max amount, regional breakdowns |
 
 ---
 

@@ -44,12 +44,14 @@ def supervisor_node(state: dict) -> Command:
 
     last_msg = messages[-1].content.lower()
 
-    # Keyword routing for anomaly detection
-    if any(kw in last_msg for kw in ["anomaly", "anomalies", "outlier", "fraud"]):
+    # Keyword routing for anomaly detection (intent-based)
+    anomaly_intents = ["detect anomaly", "detect anomalies", "find anomalies", "find outliers", "detect outliers", "scan for fraud", "anomaly detection", "outlier detection"]
+    if any(intent in last_msg for intent in anomaly_intents):
         return Command(goto="anomaly")
 
-    # Keyword routing for predictive modeling
-    if any(kw in last_msg for kw in ["predict", "forecast", "train model", "machine learning", "feature importance"]):
+    # Keyword routing for predictive modeling (intent-based)
+    predictive_intents = ["train model", "predictive model", "train a model", "predict target", "feature importance analysis"]
+    if any(intent in last_msg for intent in predictive_intents):
         return Command(goto="predictive")
 
     # If dataset has not been profiled yet, route to Profiler first

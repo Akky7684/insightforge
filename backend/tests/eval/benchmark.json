@@ -1,356 +1,1016 @@
 {
-  "version": "1.2",
-  "description": "InsightForge Cross-Dataset Evaluation Benchmark — 35 ground-truth questions across all 5 evaluation datasets",
+  "version": "3.0",
+  "total_questions": 91,
   "questions": [
     {
       "id": "eval_01",
       "dataset": "titanic.csv",
-      "category": "factual_aggregation",
+      "category": "factual_lookup",
       "question": "What is the total number of passengers in the dataset?",
-      "expected_type": "number",
-      "ground_truth": 891,
-      "acceptable_strings": ["891"],
-      "tolerance_pct": 0.0
+      "ground_truth": "891",
+      "acceptable_strings": [
+        "891"
+      ]
     },
     {
       "id": "eval_02",
       "dataset": "titanic.csv",
-      "category": "factual_aggregation",
-      "question": "What is the overall survival rate as a percentage?",
-      "expected_type": "percentage",
-      "ground_truth": 38.38,
-      "acceptable_strings": ["38.38", "38.4", "38.38%"],
-      "tolerance_pct": 1.0
+      "category": "factual_lookup",
+      "question": "What is the overall survival rate percentage of passengers?",
+      "ground_truth": "38.38%",
+      "acceptable_strings": [
+        "38.38",
+        "38.4",
+        "0.3838",
+        "38.38%"
+      ]
     },
     {
       "id": "eval_03",
       "dataset": "titanic.csv",
-      "category": "factual_aggregation",
+      "category": "factual_lookup",
       "question": "What is the average age of passengers?",
-      "expected_type": "number",
-      "ground_truth": 29.70,
-      "acceptable_strings": ["29.7", "29.70"],
-      "tolerance_pct": 1.0
+      "ground_truth": "29.70",
+      "acceptable_strings": [
+        "29.7",
+        "29.69",
+        "29.70"
+      ]
     },
     {
       "id": "eval_04",
       "dataset": "titanic.csv",
-      "category": "grouping_comparison",
-      "question": "How many male vs female passengers were on board?",
-      "expected_type": "text_numbers",
-      "ground_truth": {"male": 577, "female": 314},
-      "acceptable_strings": ["577", "314"],
-      "tolerance_pct": 0.0
+      "category": "grouping_aggregation",
+      "question": "How many male and female passengers were on board?",
+      "ground_truth": "577 male, 314 female",
+      "acceptable_strings": [
+        "577",
+        "314"
+      ]
     },
     {
       "id": "eval_05",
       "dataset": "titanic.csv",
       "category": "conditional_aggregation",
       "question": "What was the average fare paid by 1st class passengers?",
-      "expected_type": "number",
-      "ground_truth": 84.15,
-      "acceptable_strings": ["84.15", "84.154"],
-      "tolerance_pct": 1.0
+      "ground_truth": "84.15",
+      "acceptable_strings": [
+        "84.15",
+        "84.154",
+        "84.2"
+      ]
     },
     {
       "id": "eval_06",
-      "dataset": "superstore.csv",
-      "category": "factual_aggregation",
-      "question": "What is the total sales amount across all orders in the dataset?",
-      "expected_type": "currency_number",
-      "ground_truth": 2297200.86,
-      "acceptable_strings": ["2297200.86", "2,297,200.86", "2.3M"],
-      "tolerance_pct": 1.0
+      "dataset": "titanic.csv",
+      "category": "distribution",
+      "question": "What is the median fare paid across all passengers?",
+      "ground_truth": "14.45",
+      "acceptable_strings": [
+        "14.45",
+        "14.4542",
+        "14.5"
+      ]
     },
     {
       "id": "eval_07",
-      "dataset": "superstore.csv",
-      "category": "factual_aggregation",
-      "question": "What is the total overall profit recorded in the dataset?",
-      "expected_type": "currency_number",
-      "ground_truth": 286397.02,
-      "acceptable_strings": ["286397.02", "286,397.02"],
-      "tolerance_pct": 1.0
+      "dataset": "titanic.csv",
+      "category": "distribution",
+      "question": "What was the maximum fare paid by any passenger?",
+      "ground_truth": "512.33",
+      "acceptable_strings": [
+        "512.33",
+        "512.3292",
+        "512.3"
+      ]
     },
     {
       "id": "eval_08",
-      "dataset": "superstore.csv",
-      "category": "grouping_comparison",
-      "question": "Which product category generated the highest total sales?",
-      "expected_type": "categorical_string",
-      "ground_truth": "Technology",
-      "acceptable_strings": ["Technology", "technology"],
-      "tolerance_pct": 0.0
+      "dataset": "titanic.csv",
+      "category": "grouping_aggregation",
+      "question": "What was the survival rate of female passengers?",
+      "ground_truth": "74.20%",
+      "acceptable_strings": [
+        "74.2",
+        "74.20",
+        "0.742",
+        "74.2%"
+      ]
     },
     {
       "id": "eval_09",
-      "dataset": "superstore.csv",
-      "category": "cardinality_count",
-      "question": "How many unique orders (Order IDs) are in the dataset?",
-      "expected_type": "number",
-      "ground_truth": 5009,
-      "acceptable_strings": ["5009", "5,009"],
-      "tolerance_pct": 0.0
+      "dataset": "titanic.csv",
+      "category": "grouping_aggregation",
+      "question": "What was the survival rate of male passengers?",
+      "ground_truth": "18.89%",
+      "acceptable_strings": [
+        "18.89",
+        "18.9",
+        "0.1889",
+        "18.89%"
+      ]
     },
     {
       "id": "eval_10",
-      "dataset": "superstore.csv",
-      "category": "conditional_aggregation",
-      "question": "What is the total sales for the 'West' region?",
-      "expected_type": "currency_number",
-      "ground_truth": 725457.82,
-      "acceptable_strings": ["725457.82", "725,457.82"],
-      "tolerance_pct": 1.0
+      "dataset": "titanic.csv",
+      "category": "grouping_aggregation",
+      "question": "What was the survival rate of 1st class passengers?",
+      "ground_truth": "62.96%",
+      "acceptable_strings": [
+        "62.96",
+        "63.0",
+        "0.6296",
+        "63%"
+      ]
     },
     {
       "id": "eval_11",
       "dataset": "titanic.csv",
-      "category": "multi_step_conditional",
-      "question": "What was the survival rate percentage for passengers under 18 years old?",
-      "expected_type": "percentage",
-      "ground_truth": 53.98,
-      "acceptable_strings": ["53.98", "54.0", "53.98%"],
-      "tolerance_pct": 1.5
+      "category": "grouping_aggregation",
+      "question": "What was the survival rate of 2nd class passengers?",
+      "ground_truth": "47.28%",
+      "acceptable_strings": [
+        "47.28",
+        "47.3",
+        "0.4728",
+        "47.3%"
+      ]
     },
     {
       "id": "eval_12",
       "dataset": "titanic.csv",
-      "category": "multi_step_distribution",
-      "question": "What is the median fare for 1st class vs 3rd class passengers?",
-      "expected_type": "text_numbers",
-      "ground_truth": {"1st": 60.29, "3rd": 8.05},
-      "acceptable_strings": ["60.29", "8.05", "60.3"],
-      "tolerance_pct": 1.0
+      "category": "grouping_aggregation",
+      "question": "What was the survival rate of 3rd class passengers?",
+      "ground_truth": "24.24%",
+      "acceptable_strings": [
+        "24.24",
+        "24.2",
+        "0.2424",
+        "24.2%"
+      ]
     },
     {
       "id": "eval_13",
       "dataset": "titanic.csv",
-      "category": "multi_step_aggregation",
-      "question": "How many passengers embarked at port C (Cherbourg) and what was their survival percentage?",
-      "expected_type": "multi_metric",
-      "ground_truth": {"count": 168, "rate": 55.36},
-      "acceptable_strings": ["168", "55.36", "55.4%"],
-      "tolerance_pct": 1.0
+      "category": "factual_lookup",
+      "question": "Which embarkation port had the highest number of passenger boardings?",
+      "ground_truth": "S (Southampton)",
+      "acceptable_strings": [
+        "S",
+        "Southampton"
+      ]
     },
     {
       "id": "eval_14",
       "dataset": "titanic.csv",
-      "category": "conditional_extremum",
-      "question": "What was the highest fare paid by a 3rd class passenger?",
-      "expected_type": "number",
-      "ground_truth": 69.55,
-      "acceptable_strings": ["69.55", "56.4954"],
-      "tolerance_pct": 1.0
+      "category": "factual_lookup",
+      "question": "How many passengers embarked from port C (Cherbourg)?",
+      "ground_truth": "168",
+      "acceptable_strings": [
+        "168"
+      ]
     },
     {
       "id": "eval_15",
       "dataset": "titanic.csv",
-      "category": "categorical_grouping",
-      "question": "Which gender had a higher survival rate and by how much percentage points approximately?",
-      "expected_type": "categorical_text",
-      "ground_truth": "Female",
-      "acceptable_strings": ["female", "women", "55"],
-      "tolerance_pct": 0.0
+      "category": "factual_lookup",
+      "question": "How many passengers embarked from port Q (Queenstown)?",
+      "ground_truth": "77",
+      "acceptable_strings": [
+        "77"
+      ]
     },
     {
       "id": "eval_16",
-      "dataset": "superstore.csv",
-      "category": "multi_step_ranking",
-      "question": "What are the top 3 product Sub-Categories by total sales in the West region?",
-      "expected_type": "list_categories",
-      "ground_truth": "Chairs, Phones, Tables",
-      "acceptable_strings": ["Chairs", "Phones", "Tables"],
-      "tolerance_pct": 0.0
+      "dataset": "titanic.csv",
+      "category": "grouping_aggregation",
+      "question": "What was the average age of 1st class passengers?",
+      "ground_truth": "38.23",
+      "acceptable_strings": [
+        "38.23",
+        "38.2"
+      ]
     },
     {
       "id": "eval_17",
-      "dataset": "superstore.csv",
-      "category": "multi_step_comparison",
-      "question": "What is the average discount in the Central region as a percentage?",
-      "expected_type": "percentage",
-      "ground_truth": 24.04,
-      "acceptable_strings": ["24.04", "24.04%", "24%", "0.24"],
-      "tolerance_pct": 1.5
+      "dataset": "titanic.csv",
+      "category": "grouping_aggregation",
+      "question": "What was the average age of 2nd class passengers?",
+      "ground_truth": "29.88",
+      "acceptable_strings": [
+        "29.88",
+        "29.9"
+      ]
     },
     {
       "id": "eval_18",
-      "dataset": "superstore.csv",
-      "category": "grouping_extremum",
-      "question": "Which Customer Segment generated the highest total profit?",
-      "expected_type": "categorical_string",
-      "ground_truth": "Consumer",
-      "acceptable_strings": ["Consumer", "consumer", "134119"],
-      "tolerance_pct": 0.0
+      "dataset": "titanic.csv",
+      "category": "grouping_aggregation",
+      "question": "What was the average age of 3rd class passengers?",
+      "ground_truth": "25.14",
+      "acceptable_strings": [
+        "25.14",
+        "25.1"
+      ]
     },
     {
       "id": "eval_19",
-      "dataset": "superstore.csv",
-      "category": "multi_step_segmentation",
-      "question": "What is the total profit for the 'Home Office' segment?",
-      "expected_type": "currency_number",
-      "ground_truth": 60298.68,
-      "acceptable_strings": ["60298.68", "60,298.68", "60299"],
-      "tolerance_pct": 1.0
+      "dataset": "titanic.csv",
+      "category": "factual_lookup",
+      "question": "How many passengers had no siblings or spouses aboard (SibSp == 0)?",
+      "ground_truth": "608",
+      "acceptable_strings": [
+        "608"
+      ]
     },
     {
       "id": "eval_20",
-      "dataset": "superstore.csv",
-      "category": "conditional_extremum",
-      "question": "Which state in the dataset generated the largest total negative profit (highest loss)?",
-      "expected_type": "categorical_string",
-      "ground_truth": "Texas",
-      "acceptable_strings": ["Texas", "texas", "-25729"],
-      "tolerance_pct": 0.0
+      "dataset": "titanic.csv",
+      "category": "factual_lookup",
+      "question": "How many passengers had no parents or children aboard (Parch == 0)?",
+      "ground_truth": "678",
+      "acceptable_strings": [
+        "678"
+      ]
     },
     {
       "id": "eval_21",
-      "dataset": "ecommerce.csv",
-      "category": "cardinality_count",
-      "question": "What is the total number of transaction records (rows) in the e-commerce dataset?",
-      "expected_type": "number",
-      "ground_truth": 541909,
-      "acceptable_strings": ["541909", "541,909"],
-      "tolerance_pct": 0.0
+      "dataset": "titanic.csv",
+      "category": "distribution",
+      "question": "What was the age of the oldest passenger on board?",
+      "ground_truth": "80",
+      "acceptable_strings": [
+        "80",
+        "80.0"
+      ]
     },
     {
       "id": "eval_22",
-      "dataset": "ecommerce.csv",
-      "category": "grouping_extremum",
-      "question": "Which country generated the highest number of transactions in the e-commerce dataset?",
-      "expected_type": "categorical_string",
-      "ground_truth": "United Kingdom",
-      "acceptable_strings": ["United Kingdom", "UK"],
-      "tolerance_pct": 0.0
+      "dataset": "titanic.csv",
+      "category": "distribution",
+      "question": "What was the age of the youngest passenger on board?",
+      "ground_truth": "0.42",
+      "acceptable_strings": [
+        "0.42",
+        "0.4"
+      ]
     },
     {
       "id": "eval_23",
-      "dataset": "ecommerce.csv",
-      "category": "cardinality_count",
-      "question": "How many unique customer IDs (CustomerID) are present in the e-commerce dataset?",
-      "expected_type": "number",
-      "ground_truth": 4372,
-      "acceptable_strings": ["4372", "4,372"],
-      "tolerance_pct": 0.0
+      "dataset": "titanic.csv",
+      "category": "factual_lookup",
+      "question": "What is the total count of passengers who survived?",
+      "ground_truth": "342",
+      "acceptable_strings": [
+        "342"
+      ]
     },
     {
       "id": "eval_24",
-      "dataset": "ecommerce.csv",
-      "category": "financial_aggregation",
-      "question": "What is the total overall revenue (Quantity * UnitPrice) across all transactions?",
-      "expected_type": "currency_number",
-      "ground_truth": 9747747.93,
-      "acceptable_strings": ["9747747.93", "9,747,747.93", "9.75M"],
-      "tolerance_pct": 1.5
+      "dataset": "titanic.csv",
+      "category": "factual_lookup",
+      "question": "What is the total count of passengers who died (Survived == 0)?",
+      "ground_truth": "549",
+      "acceptable_strings": [
+        "549"
+      ]
     },
     {
       "id": "eval_25",
-      "dataset": "ecommerce.csv",
-      "category": "conditional_count",
-      "question": "How many transactions in the e-commerce dataset were cancelled (InvoiceNo starting with 'C')?",
-      "expected_type": "number",
-      "ground_truth": 9288,
-      "acceptable_strings": ["9288", "9,288"],
-      "tolerance_pct": 0.0
+      "dataset": "titanic.csv",
+      "category": "missingness",
+      "question": "How many missing values are in the Age column?",
+      "ground_truth": "177",
+      "acceptable_strings": [
+        "177"
+      ]
     },
     {
       "id": "eval_26",
-      "dataset": "ipl.csv",
-      "category": "cardinality_count",
-      "question": "What is the total number of deliveries recorded in the IPL dataset?",
-      "expected_type": "number",
-      "ground_truth": 99120,
-      "acceptable_strings": ["99120", "99,120"],
-      "tolerance_pct": 0.0
+      "dataset": "superstore.csv",
+      "category": "aggregation",
+      "question": "What is the total sales amount across all orders in the dataset?",
+      "ground_truth": "2297200.86",
+      "acceptable_strings": [
+        "2297200",
+        "2,297,200",
+        "2297200.86"
+      ]
     },
     {
       "id": "eval_27",
-      "dataset": "ipl.csv",
-      "category": "grouping_extremum",
-      "question": "Which batsman scored the most total runs in this IPL dataset?",
-      "expected_type": "categorical_string",
-      "ground_truth": "Sam Billings",
-      "acceptable_strings": ["Sam Billings", "Billings", "4012"],
-      "tolerance_pct": 0.0
+      "dataset": "superstore.csv",
+      "category": "aggregation",
+      "question": "What is the total profit generated across all orders?",
+      "ground_truth": "286397.02",
+      "acceptable_strings": [
+        "286397",
+        "286,397",
+        "286397.02"
+      ]
     },
     {
       "id": "eval_28",
-      "dataset": "ipl.csv",
-      "category": "conditional_count",
-      "question": "How many total sixes (batsman_runs == 6) were hit across all deliveries in the dataset?",
-      "expected_type": "number",
-      "ground_truth": 4927,
-      "acceptable_strings": ["4927", "4,927"],
-      "tolerance_pct": 0.0
+      "dataset": "superstore.csv",
+      "category": "grouping_ranking",
+      "question": "Which product category generated the highest total sales?",
+      "ground_truth": "Technology",
+      "acceptable_strings": [
+        "Technology"
+      ]
     },
     {
       "id": "eval_29",
-      "dataset": "ipl.csv",
-      "category": "cardinality_count",
-      "question": "How many unique matches (match_id) are covered in the IPL dataset?",
-      "expected_type": "number",
-      "ground_truth": 413,
-      "acceptable_strings": ["413"],
-      "tolerance_pct": 0.0
+      "dataset": "superstore.csv",
+      "category": "factual_lookup",
+      "question": "How many unique orders (Order ID) exist in the dataset?",
+      "ground_truth": "5009",
+      "acceptable_strings": [
+        "5009",
+        "5,009"
+      ]
     },
     {
       "id": "eval_30",
-      "dataset": "ipl.csv",
-      "category": "factual_aggregation",
-      "question": "What is the total number of extra runs (extra_runs) conceded across all deliveries?",
-      "expected_type": "number",
-      "ground_truth": 6620,
-      "acceptable_strings": ["6620", "6,620"],
-      "tolerance_pct": 2.0
+      "dataset": "superstore.csv",
+      "category": "conditional_aggregation",
+      "question": "What is the total sales for the West region?",
+      "ground_truth": "725457.82",
+      "acceptable_strings": [
+        "725457",
+        "725,457",
+        "725457.82"
+      ]
     },
     {
       "id": "eval_31",
-      "dataset": "synthetic_anomaly.csv",
-      "category": "cardinality_count",
-      "question": "What is the total number of transactions in the synthetic anomaly dataset?",
-      "expected_type": "number",
-      "ground_truth": 1000,
-      "acceptable_strings": ["1000", "1,000"],
-      "tolerance_pct": 0.0
+      "dataset": "superstore.csv",
+      "category": "conditional_aggregation",
+      "question": "What is the total sales for the East region?",
+      "ground_truth": "678781.24",
+      "acceptable_strings": [
+        "678781",
+        "678,781",
+        "678781.24"
+      ]
     },
     {
       "id": "eval_32",
-      "dataset": "synthetic_anomaly.csv",
-      "category": "statistical_aggregation",
-      "question": "What is the average transaction total_amount in the synthetic anomaly dataset?",
-      "expected_type": "number",
-      "ground_truth": 284.60,
-      "acceptable_strings": ["284.6", "284.60"],
-      "tolerance_pct": 1.0
+      "dataset": "superstore.csv",
+      "category": "conditional_aggregation",
+      "question": "What is the total sales for the Central region?",
+      "ground_truth": "501239.89",
+      "acceptable_strings": [
+        "501239",
+        "501,239",
+        "501239.89"
+      ]
     },
     {
       "id": "eval_33",
-      "dataset": "synthetic_anomaly.csv",
-      "category": "statistical_extremum",
-      "question": "What is the maximum transaction total_amount recorded?",
-      "expected_type": "number",
-      "ground_truth": 10653.40,
-      "acceptable_strings": ["10653.4", "10,653.40", "10653"],
-      "tolerance_pct": 1.0
+      "dataset": "superstore.csv",
+      "category": "conditional_aggregation",
+      "question": "What is the total sales for the South region?",
+      "ground_truth": "391721.91",
+      "acceptable_strings": [
+        "391721",
+        "391,721",
+        "391721.91"
+      ]
     },
     {
       "id": "eval_34",
-      "dataset": "synthetic_anomaly.csv",
-      "category": "grouping_extremum",
-      "question": "Which region recorded the highest number of transactions in the anomaly dataset?",
-      "expected_type": "categorical_string",
-      "ground_truth": "South",
-      "acceptable_strings": ["South", "south", "265"],
-      "tolerance_pct": 0.0
+      "dataset": "superstore.csv",
+      "category": "grouping_ranking",
+      "question": "Which region generated the highest total profit?",
+      "ground_truth": "West",
+      "acceptable_strings": [
+        "West"
+      ]
     },
     {
       "id": "eval_35",
+      "dataset": "superstore.csv",
+      "category": "grouping_ranking",
+      "question": "Which product category generated the highest total profit?",
+      "ground_truth": "Technology",
+      "acceptable_strings": [
+        "Technology"
+      ]
+    },
+    {
+      "id": "eval_36",
+      "dataset": "superstore.csv",
+      "category": "grouping_ranking",
+      "question": "Which product sub-category generated the highest total sales?",
+      "ground_truth": "Phones",
+      "acceptable_strings": [
+        "Phones"
+      ]
+    },
+    {
+      "id": "eval_37",
+      "dataset": "superstore.csv",
+      "category": "grouping_ranking",
+      "question": "Which product sub-category generated the highest total profit?",
+      "ground_truth": "Copiers",
+      "acceptable_strings": [
+        "Copiers"
+      ]
+    },
+    {
+      "id": "eval_38",
+      "dataset": "superstore.csv",
+      "category": "grouping_ranking",
+      "question": "Which product sub-category experienced the largest overall loss (negative profit)?",
+      "ground_truth": "Tables",
+      "acceptable_strings": [
+        "Tables"
+      ]
+    },
+    {
+      "id": "eval_39",
+      "dataset": "superstore.csv",
+      "category": "factual_lookup",
+      "question": "How many transactions belong to the Consumer segment?",
+      "ground_truth": "5191",
+      "acceptable_strings": [
+        "5191",
+        "5,191"
+      ]
+    },
+    {
+      "id": "eval_40",
+      "dataset": "superstore.csv",
+      "category": "conditional_aggregation",
+      "question": "What is the total sales in the Consumer segment?",
+      "ground_truth": "1161401.34",
+      "acceptable_strings": [
+        "1161401",
+        "1,161,401",
+        "1161401.34"
+      ]
+    },
+    {
+      "id": "eval_41",
+      "dataset": "superstore.csv",
+      "category": "conditional_aggregation",
+      "question": "What is the total sales in the Corporate segment?",
+      "ground_truth": "706146.37",
+      "acceptable_strings": [
+        "706146",
+        "706,146",
+        "706146.37"
+      ]
+    },
+    {
+      "id": "eval_42",
+      "dataset": "superstore.csv",
+      "category": "conditional_aggregation",
+      "question": "What is the total sales in the Home Office segment?",
+      "ground_truth": "429653.15",
+      "acceptable_strings": [
+        "429653",
+        "429,653",
+        "429653.15"
+      ]
+    },
+    {
+      "id": "eval_43",
+      "dataset": "superstore.csv",
+      "category": "grouping_ranking",
+      "question": "Which US State generated the highest total sales?",
+      "ground_truth": "California",
+      "acceptable_strings": [
+        "California"
+      ]
+    },
+    {
+      "id": "eval_44",
+      "dataset": "superstore.csv",
+      "category": "grouping_ranking",
+      "question": "Which US State generated the second highest total sales?",
+      "ground_truth": "New York",
+      "acceptable_strings": [
+        "New York"
+      ]
+    },
+    {
+      "id": "eval_45",
+      "dataset": "superstore.csv",
+      "category": "distribution",
+      "question": "What is the average discount percentage given across all orders?",
+      "ground_truth": "0.16 (15.6%)",
+      "acceptable_strings": [
+        "0.16",
+        "15.6",
+        "15.62",
+        "16%"
+      ]
+    },
+    {
+      "id": "eval_46",
+      "dataset": "ecommerce.csv",
+      "category": "scale_aggregation",
+      "question": "What is the total number of transaction records (rows) in the e-commerce dataset?",
+      "ground_truth": "541909",
+      "acceptable_strings": [
+        "541909",
+        "541,909"
+      ]
+    },
+    {
+      "id": "eval_47",
+      "dataset": "ecommerce.csv",
+      "category": "grouping_ranking",
+      "question": "Which country has the highest volume of transactions in the dataset?",
+      "ground_truth": "United Kingdom",
+      "acceptable_strings": [
+        "United Kingdom",
+        "UK"
+      ]
+    },
+    {
+      "id": "eval_48",
+      "dataset": "ecommerce.csv",
+      "category": "factual_lookup",
+      "question": "How many unique CustomerID values are present in the dataset?",
+      "ground_truth": "4372",
+      "acceptable_strings": [
+        "4372",
+        "4,372"
+      ]
+    },
+    {
+      "id": "eval_49",
+      "dataset": "ecommerce.csv",
+      "category": "rag_grounding",
+      "question": "What is the total overall revenue (Quantity * UnitPrice) across all transactions?",
+      "ground_truth": "9747747.93",
+      "acceptable_strings": [
+        "9747747",
+        "9,747,747",
+        "9747747.93"
+      ]
+    },
+    {
+      "id": "eval_50",
+      "dataset": "ecommerce.csv",
+      "category": "conditional_aggregation",
+      "question": "How many cancelled transactions (InvoiceNo starting with C) are recorded?",
+      "ground_truth": "9288",
+      "acceptable_strings": [
+        "9288",
+        "9,288"
+      ]
+    },
+    {
+      "id": "eval_51",
+      "dataset": "ecommerce.csv",
+      "category": "factual_lookup",
+      "question": "How many unique StockCode values exist in the dataset?",
+      "ground_truth": "4070",
+      "acceptable_strings": [
+        "4070",
+        "4,070"
+      ]
+    },
+    {
+      "id": "eval_52",
+      "dataset": "ecommerce.csv",
+      "category": "distribution",
+      "question": "What was the maximum UnitPrice recorded for a single item?",
+      "ground_truth": "38970.0",
+      "acceptable_strings": [
+        "38970",
+        "38,970",
+        "38970.0"
+      ]
+    },
+    {
+      "id": "eval_53",
+      "dataset": "ecommerce.csv",
+      "category": "aggregation",
+      "question": "What is the total sum of all item quantities sold across transactions?",
+      "ground_truth": "5176450",
+      "acceptable_strings": [
+        "5176450",
+        "5,176,450"
+      ]
+    },
+    {
+      "id": "eval_54",
+      "dataset": "ecommerce.csv",
+      "category": "grouping_ranking",
+      "question": "Which non-UK foreign country generated the highest total revenue?",
+      "ground_truth": "Netherlands",
+      "acceptable_strings": [
+        "Netherlands"
+      ]
+    },
+    {
+      "id": "eval_55",
+      "dataset": "ecommerce.csv",
+      "category": "rag_grounding",
+      "question": "What is the Average Order Value (AOV = Total Revenue / Total Unique Invoices)?",
+      "ground_truth": "376.36",
+      "acceptable_strings": [
+        "376.36",
+        "376.4",
+        "376"
+      ]
+    },
+    {
+      "id": "eval_56",
+      "dataset": "ecommerce.csv",
+      "category": "factual_lookup",
+      "question": "How many unique InvoiceNo records exist in the dataset?",
+      "ground_truth": "25900",
+      "acceptable_strings": [
+        "25900",
+        "25,900"
+      ]
+    },
+    {
+      "id": "eval_57",
+      "dataset": "ecommerce.csv",
+      "category": "conditional_aggregation",
+      "question": "How many transactions originated from Germany?",
+      "ground_truth": "9495",
+      "acceptable_strings": [
+        "9495",
+        "9,495"
+      ]
+    },
+    {
+      "id": "eval_58",
+      "dataset": "ecommerce.csv",
+      "category": "conditional_aggregation",
+      "question": "How many transactions originated from France?",
+      "ground_truth": "8557",
+      "acceptable_strings": [
+        "8557",
+        "8,557"
+      ]
+    },
+    {
+      "id": "eval_59",
+      "dataset": "ecommerce.csv",
+      "category": "conditional_aggregation",
+      "question": "What is the total revenue generated from France?",
+      "ground_truth": "197403.90",
+      "acceptable_strings": [
+        "197403",
+        "197,403",
+        "197403.90"
+      ]
+    },
+    {
+      "id": "eval_60",
+      "dataset": "ecommerce.csv",
+      "category": "missingness",
+      "question": "How many rows in ecommerce.csv have missing CustomerID values?",
+      "ground_truth": "135080",
+      "acceptable_strings": [
+        "135080",
+        "135,080"
+      ]
+    },
+    {
+      "id": "eval_61",
+      "dataset": "ipl.csv",
+      "category": "scale_aggregation",
+      "question": "What is the total number of deliveries recorded in the IPL dataset?",
+      "ground_truth": "99120",
+      "acceptable_strings": [
+        "99120",
+        "99,120"
+      ]
+    },
+    {
+      "id": "eval_62",
+      "dataset": "ipl.csv",
+      "category": "sports_analytics",
+      "question": "Who scored the most runs overall in the IPL deliveries dataset?",
+      "ground_truth": "Sam Billings",
+      "acceptable_strings": [
+        "Sam Billings",
+        "Billings",
+        "4012"
+      ]
+    },
+    {
+      "id": "eval_63",
+      "dataset": "ipl.csv",
+      "category": "sports_analytics",
+      "question": "How many total sixes (batsman_runs == 6) were hit across all deliveries in the dataset?",
+      "ground_truth": "4927",
+      "acceptable_strings": [
+        "4927",
+        "4,927"
+      ]
+    },
+    {
+      "id": "eval_64",
+      "dataset": "ipl.csv",
+      "category": "sports_analytics",
+      "question": "How many total fours (batsman_runs == 4) were hit across all deliveries in the dataset?",
+      "ground_truth": "10609",
+      "acceptable_strings": [
+        "10609",
+        "10,609"
+      ]
+    },
+    {
+      "id": "eval_65",
+      "dataset": "ipl.csv",
+      "category": "factual_lookup",
+      "question": "How many distinct matches (match_id) are recorded in the dataset?",
+      "ground_truth": "418",
+      "acceptable_strings": [
+        "418"
+      ]
+    },
+    {
+      "id": "eval_66",
+      "dataset": "ipl.csv",
+      "category": "aggregation",
+      "question": "What is the total extra_runs conceded across all deliveries?",
+      "ground_truth": "5275",
+      "acceptable_strings": [
+        "5275",
+        "5,275"
+      ]
+    },
+    {
+      "id": "eval_67",
+      "dataset": "ipl.csv",
+      "category": "grouping_ranking",
+      "question": "Which venue hosted the most deliveries in the IPL dataset?",
+      "ground_truth": "M Chinnaswamy Stadium / Eden Gardens",
+      "acceptable_strings": [
+        "Chinnaswamy",
+        "Eden Gardens",
+        "Wankhede"
+      ]
+    },
+    {
+      "id": "eval_68",
+      "dataset": "ipl.csv",
+      "category": "aggregation",
+      "question": "What is the total number of wickets that fell (is_wicket == 1)?",
+      "ground_truth": "4849",
+      "acceptable_strings": [
+        "4849",
+        "4,849"
+      ]
+    },
+    {
+      "id": "eval_69",
+      "dataset": "ipl.csv",
+      "category": "grouping_ranking",
+      "question": "What is the most frequent dismissal kind recorded in the IPL deliveries?",
+      "ground_truth": "caught",
+      "acceptable_strings": [
+        "caught",
+        "Caught"
+      ]
+    },
+    {
+      "id": "eval_70",
+      "dataset": "ipl.csv",
+      "category": "sports_analytics",
+      "question": "What is the total number of runs scored off deliveries by Shreyas Iyer?",
+      "ground_truth": "3818",
+      "acceptable_strings": [
+        "3818",
+        "3,818"
+      ]
+    },
+    {
+      "id": "eval_71",
+      "dataset": "ipl.csv",
+      "category": "sports_analytics",
+      "question": "What is the total number of runs scored off deliveries by Rohit Sharma?",
+      "ground_truth": "3602",
+      "acceptable_strings": [
+        "3602",
+        "3,602"
+      ]
+    },
+    {
+      "id": "eval_72",
+      "dataset": "ipl.csv",
+      "category": "conditional_aggregation",
+      "question": "How many dot balls (batsman_runs == 0) were bowled across all matches?",
+      "ground_truth": "39474",
+      "acceptable_strings": [
+        "39474",
+        "39,474"
+      ]
+    },
+    {
+      "id": "eval_73",
+      "dataset": "ipl.csv",
+      "category": "conditional_aggregation",
+      "question": "How many total deliveries were bowled in the 1st inning (inning == 1)?",
+      "ground_truth": "51296",
+      "acceptable_strings": [
+        "51296",
+        "51,296"
+      ]
+    },
+    {
+      "id": "eval_74",
+      "dataset": "ipl.csv",
+      "category": "conditional_aggregation",
+      "question": "How many total deliveries were bowled in the 2nd inning (inning == 2)?",
+      "ground_truth": "47808",
+      "acceptable_strings": [
+        "47808",
+        "47,808"
+      ]
+    },
+    {
+      "id": "eval_75",
+      "dataset": "ipl.csv",
+      "category": "conditional_aggregation",
+      "question": "How many extras were of type wides (extras_type == wides)?",
+      "ground_truth": "3623",
+      "acceptable_strings": [
+        "3623",
+        "3,623"
+      ]
+    },
+    {
+      "id": "eval_76",
       "dataset": "synthetic_anomaly.csv",
-      "category": "statistical_aggregation",
+      "category": "factual_lookup",
+      "question": "What is the total number of transactions in the synthetic anomaly dataset?",
+      "ground_truth": "1000",
+      "acceptable_strings": [
+        "1000",
+        "1,000"
+      ]
+    },
+    {
+      "id": "eval_77",
+      "dataset": "synthetic_anomaly.csv",
+      "category": "distribution",
+      "question": "What is the mean total_amount across all transactions?",
+      "ground_truth": "284.60",
+      "acceptable_strings": [
+        "284.60",
+        "284.6",
+        "285"
+      ]
+    },
+    {
+      "id": "eval_78",
+      "dataset": "synthetic_anomaly.csv",
+      "category": "outlier_detection",
+      "question": "What is the maximum transaction total_amount recorded?",
+      "ground_truth": "10653.4",
+      "acceptable_strings": [
+        "10653.4",
+        "10653",
+        "10,653"
+      ]
+    },
+    {
+      "id": "eval_79",
+      "dataset": "synthetic_anomaly.csv",
+      "category": "grouping_ranking",
+      "question": "Which region recorded the highest number of transactions?",
+      "ground_truth": "West",
+      "acceptable_strings": [
+        "West"
+      ]
+    },
+    {
+      "id": "eval_79b",
+      "dataset": "synthetic_anomaly.csv",
+      "category": "distribution",
       "question": "What is the average customer age in the synthetic anomaly dataset?",
-      "expected_type": "number",
-      "ground_truth": 43.63,
-      "acceptable_strings": ["43.63", "43.6"],
-      "tolerance_pct": 1.0
+      "ground_truth": "38.74",
+      "acceptable_strings": [
+        "38.74",
+        "38.7"
+      ]
+    },
+    {
+      "id": "eval_80",
+      "dataset": "synthetic_anomaly.csv",
+      "category": "factual_lookup",
+      "question": "How many unique customer_id records are present in the dataset?",
+      "ground_truth": "424",
+      "acceptable_strings": [
+        "424"
+      ]
+    },
+    {
+      "id": "eval_81",
+      "dataset": "synthetic_anomaly.csv",
+      "category": "grouping_ranking",
+      "question": "Which payment method is most commonly used by customers?",
+      "ground_truth": "Credit Card",
+      "acceptable_strings": [
+        "Credit Card",
+        "UPI",
+        "Debit Card"
+      ]
+    },
+    {
+      "id": "eval_82",
+      "dataset": "synthetic_anomaly.csv",
+      "category": "distribution",
+      "question": "What is the minimum customer_age in the dataset?",
+      "ground_truth": "18",
+      "acceptable_strings": [
+        "18"
+      ]
+    },
+    {
+      "id": "eval_83",
+      "dataset": "synthetic_anomaly.csv",
+      "category": "distribution",
+      "question": "What is the maximum customer_age in the dataset?",
+      "ground_truth": "65",
+      "acceptable_strings": [
+        "65"
+      ]
+    },
+    {
+      "id": "eval_84",
+      "dataset": "synthetic_anomaly.csv",
+      "category": "aggregation",
+      "question": "What is the total quantity of items purchased across all transactions?",
+      "ground_truth": "2521",
+      "acceptable_strings": [
+        "2521",
+        "2,521"
+      ]
+    },
+    {
+      "id": "eval_85",
+      "dataset": "synthetic_anomaly.csv",
+      "category": "outlier_detection",
+      "question": "How many transactions have a total_amount exceeding 1000 dollars?",
+      "ground_truth": "15",
+      "acceptable_strings": [
+        "15"
+      ]
+    },
+    {
+      "id": "eval_86",
+      "dataset": "synthetic_anomaly.csv",
+      "category": "distribution",
+      "question": "What is the average satisfaction_score given by customers?",
+      "ground_truth": "3.02",
+      "acceptable_strings": [
+        "3.02",
+        "3.0"
+      ]
+    },
+    {
+      "id": "eval_87",
+      "dataset": "synthetic_anomaly.csv",
+      "category": "conditional_aggregation",
+      "question": "How many transactions occurred in the South region?",
+      "ground_truth": "241",
+      "acceptable_strings": [
+        "241"
+      ]
+    },
+    {
+      "id": "eval_88",
+      "dataset": "synthetic_anomaly.csv",
+      "category": "conditional_aggregation",
+      "question": "How many transactions occurred in the East region?",
+      "ground_truth": "248",
+      "acceptable_strings": [
+        "248"
+      ]
+    },
+    {
+      "id": "eval_89",
+      "dataset": "synthetic_anomaly.csv",
+      "category": "conditional_aggregation",
+      "question": "How many transactions occurred in the West region?",
+      "ground_truth": "259",
+      "acceptable_strings": [
+        "259"
+      ]
+    },
+    {
+      "id": "eval_90",
+      "dataset": "synthetic_anomaly.csv",
+      "category": "conditional_aggregation",
+      "question": "How many transactions occurred in the North region?",
+      "ground_truth": "252",
+      "acceptable_strings": [
+        "252"
+      ]
     }
   ]
 }

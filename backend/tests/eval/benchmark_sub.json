@@ -1,0 +1,119 @@
+{
+  "questions": [
+    {
+      "id": "eval_01",
+      "dataset": "titanic.csv",
+      "category": "factual_lookup",
+      "question": "What is the total number of passengers in the dataset?",
+      "ground_truth": "891",
+      "acceptable_strings": [
+        "891"
+      ]
+    },
+    {
+      "id": "eval_02",
+      "dataset": "titanic.csv",
+      "category": "factual_lookup",
+      "question": "What is the overall survival rate percentage of passengers?",
+      "ground_truth": "38.38%",
+      "acceptable_strings": [
+        "38.38",
+        "38.4",
+        "0.3838",
+        "38.38%"
+      ]
+    },
+    {
+      "id": "eval_26",
+      "dataset": "superstore.csv",
+      "category": "aggregation",
+      "question": "What is the total sales amount across all orders in the dataset?",
+      "ground_truth": "2297200.86",
+      "acceptable_strings": [
+        "2297200",
+        "2,297,200",
+        "2297200.86"
+      ]
+    },
+    {
+      "id": "eval_27",
+      "dataset": "superstore.csv",
+      "category": "aggregation",
+      "question": "What is the total profit generated across all orders?",
+      "ground_truth": "286397.02",
+      "acceptable_strings": [
+        "286397",
+        "286,397",
+        "286397.02"
+      ]
+    },
+    {
+      "id": "eval_46",
+      "dataset": "ecommerce.csv",
+      "category": "scale_aggregation",
+      "question": "What is the total number of transaction records (rows) in the e-commerce dataset?",
+      "ground_truth": "541909",
+      "acceptable_strings": [
+        "541909",
+        "541,909"
+      ]
+    },
+    {
+      "id": "eval_47",
+      "dataset": "ecommerce.csv",
+      "category": "grouping_ranking",
+      "question": "Which country has the highest volume of transactions in the dataset?",
+      "ground_truth": "United Kingdom",
+      "acceptable_strings": [
+        "United Kingdom",
+        "UK"
+      ]
+    },
+    {
+      "id": "eval_61",
+      "dataset": "ipl.csv",
+      "category": "scale_aggregation",
+      "question": "What is the total number of deliveries recorded in the IPL dataset?",
+      "ground_truth": "99120",
+      "acceptable_strings": [
+        "99120",
+        "99,120"
+      ]
+    },
+    {
+      "id": "eval_62",
+      "dataset": "ipl.csv",
+      "category": "sports_analytics",
+      "question": "Who scored the most runs overall in the IPL deliveries dataset?",
+      "ground_truth": "Sam Billings",
+      "acceptable_strings": [
+        "Sam Billings",
+        "Billings",
+        "4012"
+      ]
+    },
+    {
+      "id": "eval_76",
+      "dataset": "synthetic_anomaly.csv",
+      "category": "factual_lookup",
+      "question": "What is the total number of transactions in the synthetic anomaly dataset?",
+      "ground_truth": "1000",
+      "acceptable_strings": [
+        "1000",
+        "1,000"
+      ]
+    },
+    {
+      "id": "eval_77",
+      "dataset": "synthetic_anomaly.csv",
+      "category": "distribution",
+      "question": "What is the mean total_amount across all transactions?",
+      "ground_truth": "284.60",
+      "acceptable_strings": [
+        "284.60",
+        "284.6",
+        "285"
+      ]
+    }
+  ]
+}

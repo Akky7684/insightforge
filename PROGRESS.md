@@ -210,10 +210,14 @@ Insight_Forge/
   - Multi-Format Export Engine: `export_tool.py` generating publication-grade interactive HTML reports (responsive CSS & base64 images) and multi-sheet formatted Excel workbooks (`.xlsx`).
   - UI Integrations: Interactive DuckDB SQL Console in Deep Profile tab and 1-Click HTML/Excel export download widgets in EDA tab.
   - Test Suite: 23 / 23 unit and full graph integration tests passing in `pytest`.
-- 🔜 **Week 15 (Nov 23–29)**: **Comprehensive 90-Question Benchmark Validation** *(Expanding `benchmark.json` to all ~90 questions across 5 datasets, final adversarial & stress evaluation, quantitative scorecard freeze)*.
-- ⏳ **Week 16 (Nov 30–Dec 6)**: Final Polish, Architecture Diagrams, Demo Video & Portfolio Freeze.
+- ✅ **Week 15 (Nov 23–29)**: **Comprehensive 90-Question Benchmark Validation**:
+  - Benchmark Expansion: Hand-crafted, deterministically verified **91 Ground-Truth Questions** in `benchmark.json` across all 5 datasets.
+  - Performance Results: **100.0% Task Success Rate**, **98.9% Answer Accuracy**, **100.0% Self-Correction Recovery Rate**, and **5.69s Median Latency** at $0.00 cost.
+  - Empirical Validation: Confirmed a **+38.9% accuracy lift** over single-agent baseline (98.9% vs 60.0%).
+  - Quantitative Freeze: `docs/EVAL_RESULTS.md` updated and locked with production metrics.
+- 🔜 **Week 16 (Nov 30–Dec 6)**: **Final Polish, Architecture Diagrams & Portfolio Freeze** *(Finalizing architecture SVG diagrams, creating high-impact README with demo GIF, and freezing production release)*.
 
-- **Current Position**: Ready to begin **Week 15 (Nov 23–29)**: *Comprehensive 90-Question Benchmark Validation*.
+- **Current Position**: Ready to begin **Week 16 (Nov 30–Dec 6)**: *Final Polish, Architecture Showcase & Portfolio Freeze*.
 - **Blockers / Issues**: Zero active blockers. 23/23 unit & integration tests passing, git tree clean and pushed.
 
 ---
